@@ -1,21 +1,32 @@
 package com.example.tuninghub
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.tuninghub.ui.login.LoginScreen
-import com.example.tuninghub.ui.login.LoginViewModel
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.example.tuninghub.ui.navigation.AppNavigation
+import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.FirebaseFirestore
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        val db = Firebase.firestore
         super.onCreate(savedInstanceState)
+        //Inicialización Firebase
+        FirebaseApp.initializeApp(this)
         enableEdgeToEdge()
         setContent {
-            LoginScreen(LoginViewModel())
+            //Comienza a funcionar la app desde la navegación
+            /*FirebaseFirestore.getInstance().collection("users")
+                .get()
+                .addOnSuccessListener { result ->
+                    Log.d("FirestoreTest", "Documentos: ${result.size()}")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("FirestoreTest", "Error leyendo Firestore", e)
+                }*/
+            AppNavigation()
         }
     }
 }
