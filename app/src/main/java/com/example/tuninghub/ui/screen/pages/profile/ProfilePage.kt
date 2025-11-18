@@ -1,14 +1,26 @@
 package com.example.tuninghub.ui.screen.pages.profile
 
 import android.R.attr.onClick
+import android.net.Uri
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -16,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialogDefaults.iconContentColor
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -33,9 +46,11 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReusableContent
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,14 +58,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import com.example.tuninghub.R
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.data.repository.UserRepository
 import com.example.tuninghub.ui.screen.auth.AuthViewModel
@@ -58,27 +83,27 @@ import com.example.tuninghub.ui.screen.auth.AuthViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfilePage(modifier: Modifier, navController: NavController) {
-    // Crea una instancia del repository
-    val repository = remember { UserRepository() }
-    // Crea el ViewModel con el factory
-    val profileViewModel: ProfileViewModel = viewModel(
-        factory = ProfileViewModelFactory(repository)
-    )
+    //Instancia el ViewModel
+    val profileViewModel: ProfileViewModel = viewModel()
     //Instancia de AuthViewModel para el Botón de Logout
     val authViewModel: AuthViewModel = viewModel()
     // Obten el estado del usuario
     val user by profileViewModel.currentUser.collectAsState()
-    var showMenu by remember { mutableStateOf(false) }
     // Cargar usuario la primera vez
     LaunchedEffect(Unit) {
         profileViewModel.getCurrentUser()
         Log.d("ProfilePage", "usuario $user cargado")
     }
+    var showMenu by remember { mutableStateOf(false) }
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(10.dp),
         topBar = {
-            TopAppBar(
-                title = { Text("Perfil") },
+            CenterAlignedTopAppBar(
+                title = {
+                    Text("PROFILE")
+                },
                 actions = {
                     IconButton(onClick = { showMenu = !showMenu }) {
                         Icon(
@@ -86,7 +111,7 @@ fun ProfilePage(modifier: Modifier, navController: NavController) {
                             contentDescription = "Opciones"
                         )
                     }
-
+                    //Menú de despliegue
                     DropdownMenu(
                         expanded = showMenu,
                         onDismissRequest = { showMenu = false }
@@ -110,16 +135,16 @@ fun ProfilePage(modifier: Modifier, navController: NavController) {
             )
         },
         content = { paddingValues -> //mete paddingValues para que no se solape con el TopAppBar
-            Column(
+            Box(
                 modifier = Modifier
                     .padding(paddingValues)
-                    .fillMaxSize()
-                    .padding(16.dp)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center,
             ) {
                 if (user != null) {
                     CuerpoProfile(user!!)
                 } else {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                    CircularProgressIndicator()
                 }
             }
         }
@@ -127,54 +152,136 @@ fun ProfilePage(modifier: Modifier, navController: NavController) {
 }
 
 
-fun onProfileEdit(): () -> Unit {
-    return TODO("Provide the return value")
-}
-
-
 @Composable
-fun CuerpoProfile(user: UserDto?) {
+fun CuerpoProfile(u: UserDto) {
     Column(
         modifier = Modifier
-            .padding(32.dp)
-            .verticalScroll(rememberScrollState())
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        user?.let { u ->
-            Column(modifier = Modifier.padding(16.dp)) {
-                OutlinedTextField(
-                    value = u.nombre ?: "",
-                    onValueChange = {},
-                    enabled = true,
-                    readOnly = false,
-                    textStyle = LocalTextStyle.current,
-                    label = null,
-                    placeholder = null,
-                    leadingIcon = null,
-                    trailingIcon = null,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        capitalization = KeyboardCapitalization.Words,
-                        imeAction = ImeAction.Unspecified
-                    ),
-                    keyboardActions = KeyboardActions.Default,
-                    shape = OutlinedTextFieldDefaults.shape,
-                    colors = OutlinedTextFieldDefaults.colors()
-                )
 
-                Text(text = "Apellido: ${u.apellido}")
-                Text(text = "Email: ${u.email}")
-                Text(text = "Ciudad: ${u.ciudad}")
-                Text(text = "Instrumento: ${u.instrumento}")
-                // Aquí puedes agregar más campos
+        //PRIMERA SECCIÓN
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            val imagePainter = if (u.fotoPerfil.isNullOrEmpty()) {
+                painterResource(id = R.drawable.avatar_default)
+            } else {
+                // De lo contrario, carga la imagen de forma asíncrona desde la URL
+                rememberAsyncImagePainter(u.fotoPerfil)
             }
-        } ?: run {
-            // Mostrar loader mientras se carga
-            Box(Modifier.fillMaxSize()) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                Text("Cargando usuario o no encontrado...")
+            Image(
+                painter = imagePainter,
+                contentDescription = "Foto de perfil",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .size(140.dp)
+                    .clip(CircleShape)
+                    .border(border = BorderStroke(2.dp, Color.Black), CircleShape)
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+                    .weight(1f),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(text = "${u.nombre}", fontFamily = FontFamily.Monospace, fontSize = 20.sp)
+                Text(
+                    text = "${u.apellido}",
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 30.sp,
+                    maxLines = 2
+                )
             }
+        }
+        //SEGUNDA SECCIÓN
+        Column() {
+            TextField(
+                value = u.email,
+                onValueChange = {},
+                readOnly = true,
+                textStyle = LocalTextStyle.current,
+                label = { Text("Email") },
+                placeholder = null,
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent
+                )
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                TextField(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp),
+                    value = u.ciudad ?: "",
+                    onValueChange = {},
+                    readOnly = true,
+                    textStyle = LocalTextStyle.current,
+                    label = { Text("Ciudad") },
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent
+                    )
+                )
+                TextField(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 8.dp),
+                    value = u.instrumento ?: "",
+                    onValueChange = {},
+                    readOnly = true,
+                    textStyle = LocalTextStyle.current,
+                    label = { Text("Instrumento") },
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent
+                    )
+                )
+            }
+            //TERCERA (ÚLTIMA) SECCIÓN
+            TextField(
+                value = u.situacionLaboral ?: "",
+                onValueChange = {},
+                readOnly = true,
+                textStyle = LocalTextStyle.current,
+                label = { Text("Situación laboral") },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent
+                )
+            )
+            TextField(
+                value = u.bio ?: "",
+                onValueChange = {},
+                readOnly = true,
+                textStyle = LocalTextStyle.current,
+                label = { Text("BIO") },
+                maxLines = 8,
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent
+                )
+            )
         }
     }
 }
+
 
 

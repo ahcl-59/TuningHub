@@ -1,5 +1,6 @@
 package com.example.tuninghub.ui.screen.auth
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.tuninghub.data.model.UserDto
@@ -23,10 +24,11 @@ class AuthViewModel: ViewModel() {
     fun signup(
         user: UserDto,
         password: String,
+        imageUri: Uri?,
         onResult: (Boolean, String?) -> Unit
     ) {
         //se comunica con el repository
-        repository.signup(user,password,onResult)
+        repository.signup(user,password,imageUri,onResult)
     }
 
     fun logOut(

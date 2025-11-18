@@ -19,7 +19,7 @@ fun ConnectionsPage(modifier: Modifier=Modifier){
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
-            text = "Messaging",
+            text = "CONNECTIONS",
             fontSize = 20.sp
         )
     }

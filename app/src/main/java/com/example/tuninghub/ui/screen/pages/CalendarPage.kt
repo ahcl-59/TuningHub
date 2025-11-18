@@ -19,7 +19,7 @@ fun CalendarPage(modifier: Modifier = Modifier){
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
-            text = "Messaging",
+            text = "CALENDAR",
             fontSize = 20.sp
         )
     }

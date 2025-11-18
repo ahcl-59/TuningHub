@@ -1,6 +1,7 @@
 package com.example.tuninghub.ui.screen.signup
 
 import android.net.Uri
+import android.util.Log
 import android.widget.Spinner
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -56,7 +57,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import coil.compose.rememberAsyncImagePainter
 
 
@@ -82,7 +89,7 @@ fun SignUpScreen(
         mutableStateOf(false)
     }
     val context = LocalContext.current
-
+    val focusManager = LocalFocusManager.current
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -114,21 +121,30 @@ fun SignUpScreen(
         InsertarImagen(fotoURL, onImageSelected = { fotoURL = it })
         //Email
         OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = email,
             onValueChange = { email = it },
             label = { Text(text = "Email address") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            modifier = Modifier.fillMaxWidth()
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions (onNext ={ focusManager.moveFocus(FocusDirection.Down)}),
+            singleLine = true
         )
         Spacer(modifier = Modifier.height(5.dp))
         //Password
         OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = pw,
             onValueChange = { pw = it },
             label = { Text(text = "Password") },
             visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            modifier = Modifier.fillMaxWidth()
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions (onNext ={ focusManager.moveFocus(FocusDirection.Down)}),
+            singleLine = true
+
         )
         Spacer(modifier = Modifier.height(5.dp))
         CuadroTexto(nombre, { nombre = it }, "Nombre")
@@ -155,13 +171,14 @@ fun SignUpScreen(
                     instrumento = instrumento,
                     situacionLaboral = situacion,
                     ciudad = ciudad,
-                    fotoPerfil = fotoURL.toString(),
+                    fotoPerfil = null,
                     bio = bio
                 )
 
-                authViewModel.signup(user, pw)
+                authViewModel.signup(user, pw,fotoURL)
                 { success, errorMessage ->
                     if (success) {
+                        Log.d("SIGNUP_CALLBACK", "Success = $success")
                         isLoading = false
                         navController.navigate("home") {
                             //esta línea limpia el stack para no volver a SignUpScreen
@@ -185,7 +202,7 @@ fun SignUpScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SeleccionarSituacion(
+private fun SeleccionarSituacion(
     situacionSeleccionada: String,
     onOptionSelected: (String) -> Unit,
 ) {
@@ -230,47 +247,55 @@ fun SeleccionarSituacion(
 }
 
 @Composable
-fun InsertarImagen(
+private fun InsertarImagen(
     selectedImageUri: Uri?,
     onImageSelected: (Uri?) -> Unit,
 ) {
     val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
+        contract = ActivityResultContracts.GetContent() //permite la selección de la galería
     ) { uri: Uri? ->
-        onImageSelected(uri)
+        onImageSelected(uri) //devuelve la uri
+    }
+
+    val painter = if (selectedImageUri != null) {
+        rememberAsyncImagePainter(selectedImageUri)
+    } else {
+        painterResource(id = R.drawable.avatar_default)
     }
     Image(
-        painter = rememberAsyncImagePainter(
-            selectedImageUri ?: R.drawable.avatar_default // imagen por defecto
-        ),
+        painter = painter,
         contentDescription = "Foto de perfil",
         modifier = Modifier
             .size(120.dp)
             .clip(CircleShape)
-            .clickable { launcher.launch("image/*") } // abre selector
+            .clickable { launcher.launch("image/*") }, // dispara el selector
+        contentScale = ContentScale.Crop
     )
 }
 
 @Composable
-fun CuadroTexto(
+private fun CuadroTexto(
     value: String,
     onValueChange: (String) -> Unit,
     texto: String,
 ) {
+    val focusManager = LocalFocusManager.current
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(text = texto) },
         modifier = Modifier.fillMaxWidth(),
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Next),
+        keyboardActions = KeyboardActions (onNext ={ focusManager.moveFocus(FocusDirection.Down)}
         )
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InstrumentList(
+private fun InstrumentList(
     instrumentoSeleccionado: String,
     onInstrumentSelected: (String) -> Unit,
 ) {
