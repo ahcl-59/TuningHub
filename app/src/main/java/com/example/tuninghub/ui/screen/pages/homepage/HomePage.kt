@@ -1,4 +1,4 @@
-package com.example.tuninghub.ui.screen.pages
+package com.example.tuninghub.ui.screen.pages.homepage
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,10 +23,4 @@ fun HomePage(modifier: Modifier=Modifier){
             fontSize = 20.sp
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun HomePagePreview(){
-    HomePage()
 }

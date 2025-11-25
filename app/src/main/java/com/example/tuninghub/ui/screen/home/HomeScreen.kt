@@ -19,14 +19,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
-import com.example.tuninghub.data.model.UserDto
-import com.example.tuninghub.data.repository.AuthRepository
-import com.example.tuninghub.ui.screen.auth.AuthViewModel
 import com.example.tuninghub.ui.screen.pages.CalendarPage
 import com.example.tuninghub.ui.screen.pages.ConnectionsPage
-import com.example.tuninghub.ui.screen.pages.HomePage
+import com.example.tuninghub.ui.screen.pages.homepage.HomePage
 import com.example.tuninghub.ui.screen.pages.profile.ProfilePage
-import com.example.tuninghub.ui.screen.pages.profile.ProfileViewModel
 
 
 @Composable

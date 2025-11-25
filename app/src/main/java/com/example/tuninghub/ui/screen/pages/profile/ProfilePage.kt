@@ -1,12 +1,14 @@
 package com.example.tuninghub.ui.screen.pages.profile
 
 import android.R.attr.onClick
+import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +23,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -61,17 +64,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -79,6 +92,7 @@ import com.example.tuninghub.R
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.data.repository.UserRepository
 import com.example.tuninghub.ui.screen.auth.AuthViewModel
+import java.time.format.TextStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -87,8 +101,9 @@ fun ProfilePage(modifier: Modifier, navController: NavController) {
     val profileViewModel: ProfileViewModel = viewModel()
     //Instancia de AuthViewModel para el Botón de Logout
     val authViewModel: AuthViewModel = viewModel()
-    // Obten el estado del usuario
+    // Se obtiene el estado del usuario
     val user by profileViewModel.currentUser.collectAsState()
+
     // Cargar usuario la primera vez
     LaunchedEffect(Unit) {
         profileViewModel.getCurrentUser()
@@ -279,6 +294,43 @@ fun CuerpoProfile(u: UserDto) {
                     unfocusedContainerColor = Color.Transparent
                 )
             )
+            Spacer(Modifier.height(10.dp))
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "ACTIVIDAD ARTÍSTICA",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color.Gray // O el color que desees para la etiqueta
+                )
+                Spacer(Modifier.height(4.dp))
+                if (u.enlace.isNullOrBlank() || !u.enlace.startsWith("http")) return
+                // El nuevo sistema no necesita el Context ni el Intent manual
+                Text(
+                    text = buildAnnotatedString {
+                        // Utilizamos withLink y LinkAnnotation.Url
+                        withLink(
+                            LinkAnnotation.Url(
+                                url = u.enlace, // La URL que quieres abrir
+                                TextLinkStyles(
+                                    style = SpanStyle(
+                                        color = Color.Blue,
+                                        textDecoration = TextDecoration.Underline
+                                    ),
+                                    pressedStyle = SpanStyle(
+                                        color = Color(0xFF3E62FA)
+                                    ),
+
+                                )
+                            )
+                        ) {
+                            append(u.enlace) // El texto visible del enlace
+                        }
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ package com.example.tuninghub.data.repository
 import android.net.Uri
 import android.util.Log
 import com.example.tuninghub.data.model.UserDto
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -31,19 +32,21 @@ class UserRepository {
 
     // Función que hace el trabajo sucio
     fun updateUser(
-        nombre:String,
-        apellido:String,
+        nombre: String,
+        apellido: String,
         instrumento: String,
         situacion: String,
         ciudad: String,
         bio: String,
         nuevaImagen: Uri?,
-        onResult: (Boolean,String?) -> Unit // Avisar que salió mal
+        enlace: String,
+        onResult: (Boolean, String?) -> Unit, // Avisar que salió mal
     ) {
-        val uid = FirebaseAuth.getInstance().currentUser?.uid?: return
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
         // Función interna auxiliar
         fun actualizarEnFirestore(urlImagen: String?) {
+            //Actualizar variables
             val updates = mutableMapOf<String, Any>(
                 "nombre" to nombre,
                 "apellido" to apellido,
@@ -59,42 +62,53 @@ class UserRepository {
             firestore.collection("users").document(uid)
                 .update(updates)
                 .addOnSuccessListener {
-                    onResult(true,null)
-                }.addOnFailureListener { e->
+                    onResult(true, null)
+                }.addOnFailureListener { e ->
                     onResult(false, e.message)
                 }
         }
 
-        // Lógica principal
+        // Lógica para subir la actualización a FirebaseStorage
         if (nuevaImagen == null) {
             actualizarEnFirestore(null)
         } else {
             val storageRef = storage.reference.child("users/$uid/profile.jpg")
-            storageRef.putFile(nuevaImagen)
-                .continueWithTask { task ->
-                    if (!task.isSuccessful) throw task.exception!!
-                    storageRef.downloadUrl
-                }
+            storageRef.putFile(nuevaImagen).continueWithTask { task ->
+                if (!task.isSuccessful) throw task.exception!!
+                storageRef.downloadUrl
+            }
                 .addOnSuccessListener { uri ->
                     actualizarEnFirestore(uri.toString())
                 }
-                .addOnFailureListener { e-> onResult(false,e.message) }
+                .addOnFailureListener { e -> onResult(false, e.message) }
         }
     }
 
-    fun deleteUser(userId:String){
+    suspend fun deleteUser(userId: String, pw:String) {
         val firebaseUser = FirebaseAuth.getInstance().currentUser
-        firestore.collection("users")
-            .document(userId)
-            .delete()
+        val emailUser = firebaseUser?.email
 
-        storage.reference.child("users/$userId/profile.jpg")
-            .delete()
+        if (firebaseUser == null || emailUser.isNullOrEmpty()) {
+            Log.d("UserRepository", "Error de Auth: Usuario o Email no disponible.")
+            throw Exception("Authentication data missing.")
+        }
 
-        firebaseUser?.delete()
-            ?.addOnSuccessListener { Log.d("Profile", "Cuenta eliminada") }
-            ?.addOnFailureListener { Log.e("Profile", "Error eliminando cuenta") }
+        val credenciales = EmailAuthProvider.getCredential(emailUser,pw)
 
+        try {
+            firestore.collection("users")
+                .document(userId)
+                .delete()
 
+            storage.reference.child("users/$userId/profile.jpg")
+                .delete()
+
+            firebaseUser.reauthenticate(credenciales)?.await()
+            firebaseUser.delete().await()
+
+        } catch (e: Exception) {
+            Log.d("Profile", "Error eliminando cuenta")
+            throw e
+        }
     }
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.data.repository.UserRepository
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,11 +37,12 @@ class ProfileViewModel() : ViewModel() {
         situacion: String,
         ciudad: String,
         bio: String,
-        nuevaImagenUri: Uri?
+        nuevaImagenUri: Uri?,
+        enlace: String
     ) {
         repository.updateUser(
             nombre, apellido, instrumento, situacion,
-            ciudad, bio,nuevaImagenUri,
+            ciudad, bio,nuevaImagenUri,enlace,
             onResult = { isSuccess, errorMessage ->
                 if (isSuccess) {
                     // 1. Si la actualización fue exitosa, volvemos a cargar los datos
@@ -55,8 +57,10 @@ class ProfileViewModel() : ViewModel() {
         )
     }
 
-    fun deleteUser(uid:String) {
-        repository.deleteUser(uid)
+    fun deleteUser(uid:String,password:String) {
+        viewModelScope.launch{
+            repository.deleteUser(uid,password)
+        }
     }
 
 }

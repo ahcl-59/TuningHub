@@ -1,6 +1,8 @@
 package com.example.tuninghub.ui.screen.auth
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,12 +10,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -29,22 +36,24 @@ fun AuthScreen (modifier: Modifier = Modifier, navController: NavHostController)
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(32.dp),
+            .padding(32.dp)
+            .background(Color(0xffF8F8F8)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Image(
-            painter = painterResource(id= R.drawable.ic_android_orange_24dp),
-            contentDescription = "Banner",
+            painter = painterResource(id= R.drawable.logo_tuninghub,),
+            contentDescription = "Logo",
             modifier = Modifier.fillMaxWidth()
                 .height(300.dp)
+                .clip(CircleShape)
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        Text(text = "Start now",
+        Text(text = "Comienza aquí",
             style = TextStyle(
                 fontSize = 30.sp,
-                fontFamily = FontFamily.Monospace,
+                fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center
             )
@@ -53,7 +62,8 @@ fun AuthScreen (modifier: Modifier = Modifier, navController: NavHostController)
 
         Text(text = "Best music app",
             style = TextStyle(
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontFamily = FontFamily.SansSerif
             )
         )
 
@@ -62,18 +72,22 @@ fun AuthScreen (modifier: Modifier = Modifier, navController: NavHostController)
         Button(onClick = {
             navController.navigate("login")
         }, modifier = Modifier.fillMaxWidth()
-            .height(60.dp)
+            .height(60.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0077B6))
         ){
             Text (text = "Login", fontSize = 22.sp)
         }
         Spacer(modifier = Modifier.height(20.dp))
 
-        OutlinedButton(onClick = {
+        Button(onClick = {
             navController.navigate("signup")
         }, modifier = Modifier.fillMaxWidth()
-            .height(60.dp)
+            .height(60.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xffF8F8F8),
+                contentColor = Color(0xFF4A4E69)),
+            border = BorderStroke(1.dp,Color(0xff000000))
         ){
-            Text (text = "Signup", fontSize = 22.sp)
+            Text (text = "Signup", fontSize = 22.sp, color = Color (0xff4A4E69))
         }
 
     }

@@ -8,10 +8,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,9 +18,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -31,13 +29,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -48,22 +44,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.tuninghub.R
-import com.example.tuninghub.data.model.UserDto
-import com.example.tuninghub.data.repository.UserRepository
+
 
 @Composable
 fun EditarPerfilScreen(
@@ -86,6 +76,12 @@ fun EditarPerfilScreen(
     var situacion by remember { mutableStateOf("") }
     var ciudad by remember { mutableStateOf("") }
     var bio by remember { mutableStateOf("") }
+    var enlace by remember { mutableStateOf("") }
+
+    // Variables para la eliminación de la cuenta
+    var alertaDelete by remember { mutableStateOf(false) }
+    var alertaPassword by remember { mutableStateOf("") }
+    var isDeleting by remember { mutableStateOf(false) }
 
     // Recargar datos cuando llega el usuario ms después de la carga inicial
     // Equiparamos las variables a los atributos de user.
@@ -124,7 +120,7 @@ fun EditarPerfilScreen(
                 //2. si la imagen no es nula, tomará la imagen de u.fotoPerfil ya
                 // existente en el user. Sin embargo si no hay imagen, tenemos el placeholder y el error
                 // que nos dará la foto de avatar_default
-                val imageSource= imagen ?: u.fotoPerfil
+                val imageSource = imagen ?: u.fotoPerfil
                 Image(
                     painter = rememberAsyncImagePainter(
                         model = imageSource,
@@ -184,16 +180,27 @@ fun EditarPerfilScreen(
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 5
                 )
+                Spacer(Modifier.height(16.dp))
+                //Editable: Enlace
+                OutlinedTextField(
+                    value = enlace,
+                    onValueChange = { enlace = it },
+                    label = { Text("Enlace de actividad artística") },
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 1
+                )
+                Spacer(Modifier.height(16.dp))
+                //BOTÓN DE UPDATE USER
                 Button(
                     onClick = {
                         user?.let {
                             profileViewModel.updateUser(
                                 nombre, apellido, instrumento, situacion,
-                                ciudad, bio, imagen
+                                ciudad, bio, imagen, enlace
                             )
                         }
                         navController.navigate("home") {
-                            popUpTo("editarPerfil"){inclusive = true}
+                            popUpTo("editarPerfil") { inclusive = true }
                         }
                     }
                 ) {
@@ -201,29 +208,70 @@ fun EditarPerfilScreen(
                 }
 
                 Spacer(Modifier.height(16.dp))
-
-                //Botón de DeleteUser
+                //BOTÓN DELETE USER
                 Button(
                     onClick = {
-                        profileViewModel.deleteUser(u.uid.toString())
-                        Log.d("DeleteUser","Eliminación de ${u.uid} correcto")
-                        navController.navigate("auth") { popUpTo("home"){inclusive=true} }
+                        alertaDelete = true
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                 ) {
                     Text("Eliminar cuenta")
                 }
+                //condicional para sacar la alerta
+                if (alertaDelete) {
+                    AlertDialog(
+                        onDismissRequest = {
+                            alertaDelete = false
+                            alertaPassword = ""
+                        },
+                        title = { Text("Mensaje") },
+                        text = {
+                            Column {
+                                Text("¿Estás seguro de que quieres eliminar la cuenta ?")
+
+                                OutlinedTextField(
+                                    value = alertaPassword,
+                                    onValueChange = { alertaPassword = it },
+                                    label = { Text("Reintroduce la contraseña") },
+                                    visualTransformation = PasswordVisualTransformation(),
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                                    enabled = !isDeleting, // Deshabilitar mientras carga
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+
+                                    isDeleting = true
+                                    profileViewModel.deleteUser(u.uid.toString(), alertaPassword)
+                                    Log.d("DeleteUser", "Eliminación de ${u.uid} correcto")
+                                    navController.navigate("auth") {popUpTo("home") {inclusive = true}}
+                                },
+                                enabled = alertaPassword.isNotEmpty() && !isDeleting
+                            ) {
+                                Text(text = "SÍ")
+                            }
+                        },
+                        dismissButton = {
+                            Button(
+                                onClick = {
+                                    alertaDelete = false
+                                }
+                            ) {
+                                Text(text = "NO")
+                            }
+                        }
+                    )
+                }
             }
-
-
-        } ?: Box(Modifier.fillMaxSize()) {
-            CircularProgressIndicator(Modifier.align(Alignment.Center))
+        } ?: Box(
+            Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
         }
-
-        Spacer(Modifier.height(24.dp))
-
-        //SAVE CHANGES BUTTON
-
     }
 }
 

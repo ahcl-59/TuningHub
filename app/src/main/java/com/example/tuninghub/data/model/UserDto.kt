@@ -11,5 +11,6 @@ data class UserDto(
     val ciudad: String?=null,
     val situacionLaboral: String?=null,
     val fotoPerfil: String?=null,
-    val bio: String?=null
+    val bio: String?=null,
+    val enlace: String?=null
 )

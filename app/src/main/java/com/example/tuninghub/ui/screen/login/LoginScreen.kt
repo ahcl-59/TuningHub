@@ -86,7 +86,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
         Spacer(modifier = Modifier.height(20.dp))
 
         Image(
-            painter = painterResource(id= R.drawable.ic_android_orange_24dp),
+            painter = painterResource(id= R.drawable.logo_tuninghub),
             contentDescription = "Login Banner",
             modifier = Modifier.fillMaxWidth()
                 .height(200.dp)
@@ -137,7 +137,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
         },
             modifier = Modifier.fillMaxWidth()
             .height(60.dp),
-            enabled = !isLoading
+            enabled = email.isNotBlank() && password.isNotBlank() && !isLoading
         ){
             Text (text = "Login", fontSize = 22.sp)
             //Text (text = if(isLoading) "Logging in" else "Login", fontSize = 22.sp)

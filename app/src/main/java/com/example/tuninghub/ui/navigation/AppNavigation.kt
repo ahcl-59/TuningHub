@@ -11,10 +11,10 @@ import com.example.tuninghub.ui.screen.signup.SignUpScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tuninghub.data.repository.UserRepository
 import com.example.tuninghub.ui.screen.home.HomeScreen
-import com.example.tuninghub.ui.screen.home.HomeViewModel
 import com.example.tuninghub.ui.screen.auth.AuthScreen
 import com.example.tuninghub.ui.screen.auth.AuthViewModel
 import com.example.tuninghub.ui.screen.pages.profile.EditarPerfilScreen
+import com.example.tuninghub.ui.screen.pages.profile.ProfilePage
 import com.example.tuninghub.ui.screen.pages.profile.ProfileViewModel
 
 import com.google.firebase.auth.FirebaseAuth
@@ -46,7 +46,6 @@ fun AppNavigation(modifier: Modifier = Modifier){
                 HomeScreen(modifier,navController)
             }
             composable("editarPerfil"){
-                val repository = remember { UserRepository() }
                 val profileViewModel: ProfileViewModel = viewModel()
                 EditarPerfilScreen(modifier, navController, profileViewModel)
             }

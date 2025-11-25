@@ -82,6 +82,7 @@ fun SignUpScreen(
     var ciudad: String by remember { mutableStateOf("") }
     var fotoURL by remember { mutableStateOf<Uri?>(null) }
     var bio: String by remember { mutableStateOf("") }
+    var enlace:String by remember {mutableStateOf("")}
     //variable de scroll vertical para movernos en el formulario
     val scrollState = rememberScrollState()
     //esta variable sirve para "activar/desactivar" el botón
@@ -159,6 +160,8 @@ fun SignUpScreen(
         Spacer(modifier = Modifier.height(5.dp))
         CuadroTexto(bio, { bio = it }, "Biografía")
         Spacer(modifier = Modifier.height(5.dp))
+        CuadroTexto(enlace, { enlace = it }, "Enlace de actividad artística")
+        Spacer(modifier = Modifier.height(5.dp))
         //Botón
         Button(
             onClick = {
@@ -172,7 +175,8 @@ fun SignUpScreen(
                     situacionLaboral = situacion,
                     ciudad = ciudad,
                     fotoPerfil = null,
-                    bio = bio
+                    bio = bio,
+                    enlace = enlace
                 )
 
                 authViewModel.signup(user, pw,fotoURL)
