@@ -25,12 +25,12 @@ class ConnectionRepository() {
     /*
     fun mapDtoToUI(
         userDto: UserDto,
-        interests: List<ConnectionDto> // Lista de intereses enviados/recibidos
+        interests: List<ConnectionDto> // Lista de intereses enviados o recibidos
     ): MusicianDto {
-        // 1. Determinar el estado de conexión
+        // 1 -> Determinar el estado de la conexión
         val status = determineConnectionStatus(userDto.id, interests)
 
-        // 2. Mapear y devolver el modelo de presentación (solo con los datos necesarios)
+        // 2 -> Mapear y devolver el modelo de presentación (sólo con los datos necesarios)
         return MusicianDto(
             id = userDto.id,
             name = userDto.name,

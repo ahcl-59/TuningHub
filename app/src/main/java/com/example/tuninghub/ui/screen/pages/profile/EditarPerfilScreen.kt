@@ -8,6 +8,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -98,8 +99,10 @@ fun EditarPerfilScreen(
 
     Column(
         modifier = Modifier
+            .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(30.dp)
+            .padding(30.dp),
+        verticalArrangement = Arrangement.Center
     ) {
         user?.let { u ->
 
@@ -117,9 +120,9 @@ fun EditarPerfilScreen(
                 }
                 //El valor de imageSource depende del flujo siguiente:
                 //1. si la imagen es nula, irá a la foto almacenada = null
-                //2. si la imagen no es nula, tomará la imagen de u.fotoPerfil ya
-                // existente en el user. Sin embargo si no hay imagen, tenemos el placeholder y el error
-                // que nos dará la foto de avatar_default
+                /*2. si la imagen no es nula, tomará la imagen de u.fotoPerfil ya
+                existente en el user. Sin embargo si no hay imagen, tenemos el placeholder y el error
+                que nos dará la foto de avatar_default*/
                 val imageSource = imagen ?: u.fotoPerfil
                 Image(
                     painter = rememberAsyncImagePainter(

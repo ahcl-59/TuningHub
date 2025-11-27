@@ -14,6 +14,11 @@ class UserRepository {
     private val firestore = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
 
+    //Función adicional para encontrar el id del User
+    fun getCurrentUserId(): String? {
+        return FirebaseAuth.getInstance().currentUser?.uid
+    }
+
     suspend fun getUser(uid: String): UserDto? {
         return try {
             val snapshot = firestore.collection("users").document(uid).get().await()

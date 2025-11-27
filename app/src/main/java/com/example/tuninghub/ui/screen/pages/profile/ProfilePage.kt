@@ -294,18 +294,20 @@ fun CuerpoProfile(u: UserDto) {
                     unfocusedContainerColor = Color.Transparent
                 )
             )
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(20.dp))
             Column(
+                modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = "ACTIVIDAD ARTÍSTICA",
                     style = MaterialTheme.typography.labelMedium,
-                    color = Color.Gray // O el color que desees para la etiqueta
+                    color = Color.Gray,
+                    textAlign = TextAlign.Center
                 )
                 Spacer(Modifier.height(4.dp))
                 if (u.enlace.isNullOrBlank() || !u.enlace.startsWith("http")) return
-                // El nuevo sistema no necesita el Context ni el Intent manual
+
                 Text(
                     text = buildAnnotatedString {
                         // Utilizamos withLink y LinkAnnotation.Url
