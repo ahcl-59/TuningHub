@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+# Archivos de configuración de Google Cloud (Contienen API keys)
+google-services.json
