@@ -28,6 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.tuninghub.R
+import com.example.tuninghub.ui.theme.BrightTealBlue
+import com.example.tuninghub.ui.theme.DustGrey
+import com.example.tuninghub.ui.theme.SnowWhite
+
 
 @Composable
 fun AuthScreen (modifier: Modifier = Modifier, navController: NavHostController){
@@ -35,7 +39,7 @@ fun AuthScreen (modifier: Modifier = Modifier, navController: NavHostController)
         modifier = modifier
             .fillMaxSize()
             .padding(32.dp)
-            .background(Color(0xffF8F8F8)),
+            .background(color = SnowWhite),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
@@ -71,7 +75,7 @@ fun AuthScreen (modifier: Modifier = Modifier, navController: NavHostController)
             navController.navigate("login")
         }, modifier = Modifier.fillMaxWidth()
             .height(60.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0077B6))
+            colors = ButtonDefaults.buttonColors(containerColor = BrightTealBlue)
         ){
             Text (text = "Login", fontSize = 22.sp)
         }
@@ -81,11 +85,12 @@ fun AuthScreen (modifier: Modifier = Modifier, navController: NavHostController)
             navController.navigate("signup")
         }, modifier = Modifier.fillMaxWidth()
             .height(60.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xffF8F8F8),
-                contentColor = Color(0xFF4A4E69)),
+            colors = ButtonDefaults.buttonColors(containerColor = SnowWhite,
+                contentColor = DustGrey
+            ),
             border = BorderStroke(1.dp,Color(0xff000000))
         ){
-            Text (text = "Signup", fontSize = 22.sp, color = Color (0xff4A4E69))
+            Text (text = "Signup", fontSize = 22.sp, color = DustGrey)
         }
 
     }

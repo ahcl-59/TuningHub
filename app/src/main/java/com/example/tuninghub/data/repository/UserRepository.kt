@@ -2,6 +2,7 @@ package com.example.tuninghub.data.repository
 
 import android.net.Uri
 import android.util.Log
+import com.example.tuninghub.data.model.MusicianDto
 import com.example.tuninghub.data.model.UserDto
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -114,6 +115,16 @@ class UserRepository {
         } catch (e: Exception) {
             Log.d("Profile", "Error eliminando cuenta")
             throw e
+        }
+    }
+    //
+    suspend fun getAllMusicians(): List<MusicianDto> {
+        return try {
+            firestore.collection("musicians").get().await().documents.mapNotNull { snapshot ->
+                snapshot.toObject(MusicianDto::class.java)
+            }
+        } catch (e:Exception){
+            emptyList()
         }
     }
 }

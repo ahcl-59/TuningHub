@@ -1,24 +1,16 @@
 package com.example.tuninghub.data.repository
 
+import android.util.Log
 import com.example.tuninghub.data.model.MusicianDto
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 
 class ConnectionRepository() {
 
-    val firebase = Firebase.firestore
-    suspend fun getAllMusicians(): List<MusicianDto> {
-        return try {
-            firebase.collection("").get().await().documents.mapNotNull { snapshot ->
-                snapshot.toObject(MusicianDto::class.java)
-            }
-        } catch (e:Exception){
-            emptyList()
+    val firebase = FirebaseFirestore.getInstance()
 
-        }
-
-    }
 
 
     // Dentro de ConnectionRepository

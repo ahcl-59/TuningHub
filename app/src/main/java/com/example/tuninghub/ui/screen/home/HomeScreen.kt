@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import com.example.tuninghub.ui.screen.pages.CalendarPage
-import com.example.tuninghub.ui.screen.pages.ConnectionsPage
+
 import com.example.tuninghub.ui.screen.pages.homepage.HomePage
 import com.example.tuninghub.ui.screen.pages.profile.ProfilePage
 
@@ -30,9 +30,10 @@ fun HomeScreen(modifier: Modifier, navController: NavController) {
     //variable final con la lista de iconos del bottomNavigationBar
     val navItemList = listOf(
         NavItem("Home", Icons.Default.Home),
-        NavItem("Connect", Icons.Default.Email),
+        NavItem("Profile",Icons.Default.Person),
         NavItem("Calendar", Icons.Default.DateRange),
-        NavItem("Profile",Icons.Default.Person)
+        NavItem("Connect", Icons.Default.Email)
+
     )
     var selectedIndex by remember {
         mutableStateOf(0)
@@ -83,9 +84,10 @@ fun BottomNavigationBar(
 fun ContentScreen(modifier: Modifier, selectedIndex: Int, navController: NavController) {
     when (selectedIndex){
         0 -> HomePage(modifier)
-        1 -> ConnectionsPage(modifier)
+        1 -> ProfilePage(modifier,navController)
         2 -> CalendarPage(modifier)
-        3 -> ProfilePage(modifier,navController)
+        3 -> navController.navigate("chat")
+
     }
 }
 

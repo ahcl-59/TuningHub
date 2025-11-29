@@ -13,6 +13,7 @@ import com.example.tuninghub.data.repository.UserRepository
 import com.example.tuninghub.ui.screen.home.HomeScreen
 import com.example.tuninghub.ui.screen.auth.AuthScreen
 import com.example.tuninghub.ui.screen.auth.AuthViewModel
+import com.example.tuninghub.ui.screen.pages.ChatScreen
 import com.example.tuninghub.ui.screen.pages.profile.EditarPerfilScreen
 import com.example.tuninghub.ui.screen.pages.profile.ProfilePage
 import com.example.tuninghub.ui.screen.pages.profile.ProfileViewModel
@@ -48,6 +49,11 @@ fun AppNavigation(modifier: Modifier = Modifier){
             composable("editarPerfil"){
                 val profileViewModel: ProfileViewModel = viewModel()
                 EditarPerfilScreen(modifier, navController, profileViewModel)
+            }
+
+            composable("chat"){
+
+                ChatScreen(modifier,navController)
             }
     })
 }
