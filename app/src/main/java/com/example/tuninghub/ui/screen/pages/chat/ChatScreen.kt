@@ -1,8 +1,5 @@
-package com.example.tuninghub.ui.screen.pages
+package com.example.tuninghub.ui.screen.pages.chat
 
-import android.R
-import android.R.attr.onClick
-import android.media.quality.MediaQualityContract
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -12,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -23,8 +19,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,32 +45,32 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.tuninghub.data.model.MessageDto
 import com.example.tuninghub.ui.screen.pages.profile.ProfileViewModel
-import com.example.tuninghub.ui.theme.BrightTealBlue
 import com.example.tuninghub.ui.theme.DarkOrange
-import com.example.tuninghub.ui.theme.SurfTurquoise
-import org.jetbrains.annotations.Nls
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(modifier: Modifier = Modifier, navController: NavController) {
-    //val viewModel: ChatViewModel() = viewModel()
+fun ChatScreen(modifier: Modifier = Modifier, navController: NavController,chatViewModel: ChatViewModel) {
+
+    val messages by chatViewModel.messages.collectAsState()
+
     //val state by viewModel.state.collectAsStateWithLifecycle()
 
-    /*
-    LaunchedEffect(state.messages){
-        val currentUserId
 
-
-    * */
-
-    // Se obtiene el estado del usuario
-    val profileViewModel: ProfileViewModel = viewModel()
-    val u by profileViewModel.currentUser.collectAsState()
-    LaunchedEffect(Unit) {
-        profileViewModel.getCurrentUser()
-        Log.d("ProfilePage", "usuario $u cargado")
+    /*LaunchedEffect(true) {
+        chatViewModel.getAllMessages()
     }
+
+    val chat = chatViewModel.conversation.collectAsState()*/
+
+    // Se obtiene el estado del otro usuario
+    val chatViewModel: ChatViewModel = viewModel()
+    val otherUser by chatViewModel.otherUser.collectAsState()
+    LaunchedEffect(Unit) {
+        chatViewModel.cargarOtherUser()
+    }
+    Log.d("OtherUser", "usuario ${otherUser} cargado")
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
@@ -84,12 +78,12 @@ fun ChatScreen(modifier: Modifier = Modifier, navController: NavController) {
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(DarkOrange),
-                title = { Text("CHAT") },
+                title = { Text("${otherUser?.nombre} ${otherUser?.apellido}") },
                 navigationIcon = {
                     IconButton(
                         onClick = {
                             navController.navigate("home")
-                            {popUpTo("home"){inclusive=true} }
+                            { popUpTo("home") { inclusive = true } }
 
                         },
                         modifier = Modifier
@@ -104,18 +98,18 @@ fun ChatScreen(modifier: Modifier = Modifier, navController: NavController) {
                     }
                 },
                 actions = {
-                    val imagePainter = if (u?.fotoPerfil.isNullOrEmpty()) {
+                    val imagePainter = if (otherUser?.fotoPerfil.isNullOrEmpty()) {
                         painterResource(id = com.example.tuninghub.R.drawable.avatar_default)
                     } else {
                         // De lo contrario, carga la imagen de forma asíncrona desde la URL
-                        rememberAsyncImagePainter(u?.fotoPerfil)
+                        rememberAsyncImagePainter(otherUser?.fotoPerfil)
                     }
                     Image(
                         painter = imagePainter,
                         contentDescription = "Foto de perfil",
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
-                            .padding(end=10.dp)
+                            .padding(end = 10.dp)
                             .size(50.dp)
                             .clip(CircleShape)
                             .border(border = BorderStroke(1.dp, Color.Black), CircleShape),
@@ -136,7 +130,9 @@ fun ChatScreen(modifier: Modifier = Modifier, navController: NavController) {
                     .fillMaxSize()
                     .imePadding(),
             ) {
-                //aquí van los cuadros (items) de msjes
+                /*items(messages){msg->
+                    Text(msg.text)
+                }*/
             }
             Box( // Usamos Column o Box para posicionar el ChatBox
                 modifier = Modifier
@@ -145,8 +141,9 @@ fun ChatScreen(modifier: Modifier = Modifier, navController: NavController) {
                     .navigationBarsPadding()
                     .imePadding()
             ) {
-                ChatBox(onSendListener = { message ->
-                    println("Mensaje enviado: $message")
+                ChatBox(onSendListener = {
+                    println("Mensaje enviado: $it")
+
                 }
                 )
             }
@@ -177,5 +174,20 @@ fun ChatBox(onSendListener: (String) -> Unit) {
                 onSendListener(chatText)
             }
         ) { Icon(Icons.Default.Send, contentDescription = "Botón de enviar mensaje") }
+    }
+}
+
+@Composable
+fun ChatBubble(message: MessageDto){
+    val profileViewModel: ProfileViewModel = viewModel()
+    /*val isCurrentUser = message.senderId == profileViewModel.getCurrentUser()
+    val bubbleColor = if(isCurrentUser){
+        Color.Blue
+    }else{
+        Color.Green
+    }*/
+    Box(){
+        //Chat bubble
+
     }
 }

@@ -36,7 +36,6 @@ class UserRepository {
         }
     }
 
-    // Función que hace el trabajo sucio
     fun updateUser(
         nombre: String,
         apellido: String,
@@ -109,7 +108,7 @@ class UserRepository {
             storage.reference.child("users/$userId/profile.jpg")
                 .delete()
 
-            firebaseUser.reauthenticate(credenciales)?.await()
+            firebaseUser.reauthenticate(credenciales).await()
             firebaseUser.delete().await()
 
         } catch (e: Exception) {
@@ -118,10 +117,10 @@ class UserRepository {
         }
     }
     //
-    suspend fun getAllMusicians(): List<MusicianDto> {
+    suspend fun getAllMusicians(): List<UserDto> {
         return try {
-            firestore.collection("musicians").get().await().documents.mapNotNull { snapshot ->
-                snapshot.toObject(MusicianDto::class.java)
+            firestore.collection("users").whereNotEqualTo("uid",getCurrentUserId()).get().await().documents.mapNotNull { snapshot ->
+                snapshot.toObject(UserDto::class.java)
             }
         } catch (e:Exception){
             emptyList()

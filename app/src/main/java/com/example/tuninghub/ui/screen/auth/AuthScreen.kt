@@ -62,7 +62,7 @@ fun AuthScreen (modifier: Modifier = Modifier, navController: NavHostController)
         )
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text(text = "Best music app",
+        Text(text = "Connecting musicians",
             style = TextStyle(
                 textAlign = TextAlign.Center,
                 fontFamily = FontFamily.SansSerif

@@ -1,5 +1,6 @@
 package com.example.tuninghub.ui.screen.home
 
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import com.example.tuninghub.ui.screen.pages.CalendarPage
+import com.example.tuninghub.ui.screen.pages.chat.ChatPage
 
 import com.example.tuninghub.ui.screen.pages.homepage.HomePage
 import com.example.tuninghub.ui.screen.pages.profile.ProfilePage
@@ -83,10 +85,10 @@ fun BottomNavigationBar(
 @Composable
 fun ContentScreen(modifier: Modifier, selectedIndex: Int, navController: NavController) {
     when (selectedIndex){
-        0 -> HomePage(modifier)
+        0 -> HomePage(modifier,navController)
         1 -> ProfilePage(modifier,navController)
         2 -> CalendarPage(modifier)
-        3 -> navController.navigate("chat")
+        3 -> ChatPage(modifier,navController)
 
     }
 }

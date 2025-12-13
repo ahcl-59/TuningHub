@@ -18,14 +18,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             //Comienza a funcionar la app desde la navegación
-            /*FirebaseFirestore.getInstance().collection("users")
-                .get()
-                .addOnSuccessListener { result ->
-                    Log.d("FirestoreTest", "Documentos: ${result.size()}")
-                }
-                .addOnFailureListener { e ->
-                    Log.e("FirestoreTest", "Error leyendo Firestore", e)
-                }*/
             AppNavigation()
         }
     }

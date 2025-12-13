@@ -48,7 +48,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.tuninghub.AppUtil
+import com.example.tuninghub.util.AppUtil
 import com.example.tuninghub.R
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.ui.screen.auth.AuthViewModel

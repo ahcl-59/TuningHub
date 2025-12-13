@@ -1,13 +1,17 @@
 package com.example.tuninghub.data.repository
 
 import com.example.tuninghub.data.model.ChatDto
+import com.example.tuninghub.data.model.MessageDto
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-fun generateChatId(uid1: String, uid2: String): String {
-    return listOf(uid1, uid2).sorted().joinToString("_")
-}
 
-//class ChatRepository {
+
+class ChatRepository {
+
+    private val firebase = FirebaseFirestore.getInstance()
+
+
 
     //private val firestore = FirebaseFirestore.getInstance()
 
@@ -52,6 +56,22 @@ fun generateChatId(uid1: String, uid2: String): String {
                     onMessageChanged()
                 }
             }
+    }*/
+
+    fun getChats(chId:String):List<ChatDto>{
+
+        return TODO("Provide the return value")
     }
 
-}*/
+    fun getMessages(chId:String){
+
+    }
+
+    suspend fun sendMessage(chId:String, msgId: MessageDto){
+
+    }
+    suspend fun deleteMessage(chId:String, msgId:String){
+
+    }
+
+}

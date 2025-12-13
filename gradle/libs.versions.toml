@@ -21,6 +21,7 @@ coil = "2.6.0"
 play_services_auth = "20.6.0"
 foundation = "1.9.4"
 crashlytics = "3.0.2"
+compose-material3 = "1.2.1"
 
 
 [libraries]

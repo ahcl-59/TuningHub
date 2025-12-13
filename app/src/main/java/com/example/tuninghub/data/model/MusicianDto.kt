@@ -5,5 +5,6 @@ data class MusicianDto(
     val imagen:String?=null,
     val nombre: String? = null,
     val apellido: String? = null,
-    val isMatched: Boolean? = null,
+    val instrumento: String? = null,
+    //val isMatched: Boolean? = null,
 )
