@@ -8,15 +8,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.tasks.await
 
 class AuthRepository {
 
     private val auth = FirebaseAuth.getInstance()
     private val firestore = Firebase.firestore
-    //private val storageRef = FirebaseStorage.getInstance().reference.child("profile_images/$uid.jpg")
-    //storageRef.putFile(localUri).await()
-    //private val downloadUrl = storageRef.downloadUrl.await().toString()
 
     //Accede a la aplicación
     fun login(

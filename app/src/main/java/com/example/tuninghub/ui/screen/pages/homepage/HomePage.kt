@@ -70,7 +70,6 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.tuninghub.R
 import com.example.tuninghub.data.model.MusicianDto
-import com.example.tuninghub.ui.screen.pages.chat.ChatViewModel
 import com.example.tuninghub.ui.theme.BrightTealBlue
 import com.example.tuninghub.ui.theme.SnowWhite
 import com.example.tuninghub.util.ChatIdGenerator
@@ -81,10 +80,6 @@ import com.example.tuninghub.util.ChatIdGenerator
 fun HomePage(modifier: Modifier = Modifier,navController: NavController) {
     val viewModel: HomePageViewModel = viewModel()
     val musicians = viewModel.musicians.collectAsState()
-
-
-
-
 
     Column(modifier = modifier) {
         //Usaremos el TopAppBar directamente.

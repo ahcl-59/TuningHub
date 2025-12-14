@@ -116,7 +116,7 @@ class UserRepository {
             throw e
         }
     }
-    //
+
     suspend fun getAllMusicians(): List<UserDto> {
         return try {
             firestore.collection("users").whereNotEqualTo("uid",getCurrentUserId()).get().await().documents.mapNotNull { snapshot ->
