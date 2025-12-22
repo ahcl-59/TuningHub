@@ -13,6 +13,7 @@ import androidx.navigation.navArgument
 import com.example.tuninghub.ui.screen.home.HomeScreen
 import com.example.tuninghub.ui.screen.auth.AuthScreen
 import com.example.tuninghub.ui.screen.auth.AuthViewModel
+import com.example.tuninghub.ui.screen.pages.chat.ChatPage
 import com.example.tuninghub.ui.screen.pages.chat.ChatScreen
 import com.example.tuninghub.ui.screen.pages.chat.ChatViewModel
 import com.example.tuninghub.ui.screen.pages.chat.ChatViewModelFactory
@@ -65,6 +66,10 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                     factory = ChatViewModelFactory(entry) //este es el argumento para ChatViewModel
                 )
                 ChatScreen(modifier, navController, chatViewModel)
+            }
+
+            composable("pestania_chatpage"){
+                ChatPage(modifier,navController)
             }
         }
     )

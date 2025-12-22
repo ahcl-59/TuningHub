@@ -3,40 +3,60 @@ package com.example.tuninghub.data.repository
 import android.util.Log
 import com.example.tuninghub.data.model.ChatDto
 import com.example.tuninghub.data.model.MessageDto
-import com.example.tuninghub.data.model.UserDto
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
+import kotlin.String
+import kotlin.collections.List
 
 
 class ChatRepository {
 
     private val firestore = FirebaseFirestore.getInstance()
-    private val timestampNow = com.google.firebase.Timestamp.now()
+    private val timestampNow = FieldValue.serverTimestamp()
 
     fun sendMessage(chatId: String,senderId:String,text:String) {
         val chatPath = firestore.collection("chats").document(chatId)
         val messagePath = firestore.collection("chats")
             .document(chatId).collection("messages").document()
-        val message = MessageDto(
-            messagePath.id,senderId,text,timestampNow
+        val message =
+            mapOf(
+                "senderId" to senderId,
+                "text" to text,
+                "timestamp" to timestampNow//mapeo a FieldValue para que puedan colocarse los chats correctamente según el reloj del server
         )
 
         firestore.runTransaction { transaction ->
             val document = transaction.get(chatPath)
             if (!document.exists()) {
                 chatPath.set(
-                    ChatDto(chatId, chatId.split("_"), text, timestampNow)
+                    mapOf(
+                        "chId" to chatId,
+                        "participantes" to chatId.split("_"),
+                        "lastMessage" to text,
+                        "lastUpdated" to timestampNow
+                    ),
+                    SetOptions.merge()
                 )
             }else{
-                transaction.update(chatPath,mapOf(
+                // ACTUALIZACIÓN: Solo actualizamos mensaje y tiempo
+                // Pero por seguridad, podemos forzar el chId si faltara
+                val actualizaciones = mutableMapOf<String, Any>(
                     "lastMessage" to text,
-                    "lastUpdated" to timestampNow
-                ))
+                    "lastUpdated" to FieldValue.serverTimestamp()
+                )
 
-            }
+                // Si por algún error previo el chId no existía, lo inyectamos ahora
+                if (!document.contains("chId")) {
+                    actualizaciones["chId"] = chatId
+                }
 
+                transaction.update(chatPath, actualizaciones)
+            } //Introduce el mensaje en la colección de mensajes
             transaction.set(messagePath,message)
+
         }
     }
 
@@ -58,6 +78,17 @@ class ChatRepository {
 
     fun deleteMessage(chId: String, msgId: String) {
 
+    }
+
+    //Para ChatPage
+    suspend fun getUserChats(userId:String): List<ChatDto> {
+        return try {
+            firestore.collection("chats").whereArrayContains("participantes",userId).get().await().documents.mapNotNull { snapshot ->
+                snapshot.toObject(ChatDto::class.java)
+            }
+        } catch (e:Exception){
+            emptyList()
+        }
     }
 
 }

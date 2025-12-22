@@ -11,17 +11,23 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+
 class ChatViewModel(
-    savedStateHandle: SavedStateHandle
-):ViewModel() {
+    savedStateHandle: SavedStateHandle,
+) : ViewModel() {
 
     val chRepository = ChatRepository()
+
     //Conexión con el repository de User
     val repository = UserRepository()
+
     //Establecemos el id del chat
-    private val chatId:String = savedStateHandle["chatId"]?:throw IllegalStateException("chatId missing")
+    private val chatId: String =
+        savedStateHandle["chatId"] ?: throw IllegalStateException("chatId missing")
+
     //Id Otro usuario
-    private val otherUserId: String = chatId.split("_").first{it!=repository.getCurrentUserId()}
+    private val otherUserId: String =
+        chatId.split("_").first { it != repository.getCurrentUserId() }
     //Conexión con el repository del Chat
 
     //VARIABLES DE ESTADO
@@ -31,31 +37,33 @@ class ChatViewModel(
 
     //Lista de mensajes
     private val _messages = MutableStateFlow<List<MessageDto>>(emptyList())
-    val messages:StateFlow<List<MessageDto>> = _messages
+    val messages: StateFlow<List<MessageDto>> = _messages
 
-    init{
+
+    init {
+        //ChatScreen
         cargarOtherUser()
-        listMessages()
-
+        if (chatId.isNotBlank()) {
+            listMessages()
+        }
     }
-    fun cargarOtherUser(){
-        viewModelScope.launch{
+    fun getMyChatUserId():String?{
+        return repository.getCurrentUserId()
+    }
+    fun cargarOtherUser() {
+        viewModelScope.launch {
             val user = repository.getUser(otherUserId)
             //se comunica con el UserRepository que gestiona la base de datos
             _otherUser.value = user
         }
     }
-
-
     //Enviar mensajes
-    fun sendMessage(text:String){
+    fun sendMessage(text: String) {
         val senderId = repository.getCurrentUserId()
-        chRepository.sendMessage(chatId,senderId!!,text)
+        chRepository.sendMessage(chatId, senderId!!, text)
     }
 
-    fun listMessages(){
-        chRepository.getAllMessages(chatId,{msgs->_messages.value=msgs})
+    fun listMessages() {
+        chRepository.getAllMessages(chatId, { msgs -> _messages.value = msgs })
     }
-
-
 }

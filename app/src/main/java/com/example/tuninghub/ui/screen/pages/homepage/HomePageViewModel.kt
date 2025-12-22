@@ -63,12 +63,4 @@ class HomePageViewModel: ViewModel(){
         }
 
     }
-
-
-
-    /*private fun determineConnectionStatus(id: String,interests:List<ConnectionDto>):Boolean {
-        return interests.contains<Any>(id)
-    }*/
-
-
 }
