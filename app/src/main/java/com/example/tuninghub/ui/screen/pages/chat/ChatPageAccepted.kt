@@ -52,34 +52,46 @@ import java.util.Locale
 fun ChatPageAccepted(modifier: Modifier = Modifier, navController: NavController) {
 
     val cpViewModel: ChatPageViewModel = viewModel()
-    val chats by cpViewModel.acceptedChats.collectAsState()
+    val acceptedChats by cpViewModel.acceptedChats.collectAsState()
 
     Column(
         modifier = modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        if (chats.isNotEmpty()) {
-            LazyColumn(
-                // El modifier.fillMaxSize() no es necesario aquí, ya que Column se encargará.
-                // Usamos .weight(1f) para que el LazyColumn ocupe todo el espacio restante.
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            ) {
-                items(chats) {
-                    AcceptedChatItem(it, cpViewModel, navController)
+        when{
+            acceptedChats==null->{
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
-        } else {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
+            acceptedChats.isEmpty()->{
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center)
+                {
+                    Text("No hay chats disponibles")
+                }
+            }
+            else ->{
+                LazyColumn(
+                    // El modifier.fillMaxSize() no es necesario aquí, ya que Column se encargará.
+                    // Usamos .weight(1f) para que el LazyColumn ocupe todo el espacio restante.
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) {
+                    items(acceptedChats) {
+                        AcceptedChatItem(it, cpViewModel, navController)
+                    }
+                }
             }
         }
     }

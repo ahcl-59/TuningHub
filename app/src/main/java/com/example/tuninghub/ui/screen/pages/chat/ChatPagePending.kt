@@ -57,6 +57,7 @@ import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.ui.theme.BrightTealBlue
 import com.example.tuninghub.ui.theme.DarkOrange
 import com.example.tuninghub.ui.theme.SnowWhite
+import com.example.tuninghub.ui.theme.SurfTurquoise
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -65,33 +66,46 @@ import java.util.Locale
 fun ChatPagePending(modifier: Modifier = Modifier, navController: NavController) {
 
     val cpViewModel: ChatPageViewModel = viewModel()
-    val chats by cpViewModel.pendingChats.collectAsState()
+    val pendingChats by cpViewModel.pendingChats.collectAsState()
 
     Column(
         modifier = modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (chats.isNotEmpty()) {
-            LazyColumn(
-                // El modifier.fillMaxSize() no es necesario aquí, ya que Column se encargará.
-                // Usamos .weight(1f) para que el LazyColumn ocupe todo el espacio restante.
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            ) {
-                items(chats) {
-                    PendingChatItem(it, cpViewModel, navController)
+        when{
+            pendingChats==null->{
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
-        } else {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
+            pendingChats.isEmpty()->{
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center)
+                {
+                    Text("No hay chats disponibles")
+                }
+            }
+            else ->{
+                LazyColumn(
+                    // El modifier.fillMaxSize() no es necesario aquí, ya que Column se encargará.
+                    // Usamos .weight(1f) para que el LazyColumn ocupe todo el espacio restante.
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) {
+                    items(pendingChats) {
+                        PendingChatItem(it, cpViewModel, navController)
+                    }
+                }
             }
         }
     }
@@ -161,16 +175,22 @@ fun PendingChatItem(
             Button(
                 modifier = Modifier.height(32.dp),
                 onClick = {
-                    cpViewModel.aceptarChat(chat.chId!!)
+                    chat.chId?.let{chatId->
+                        cpViewModel.aceptarChat(chatId)
+                    }
                 },
-                colors = ButtonDefaults.buttonColors(Color.Green)
+                colors = ButtonDefaults.buttonColors(SurfTurquoise)
             ) {
                 Text("ACEPTAR")
             }
             //Botón RECHAZAR
             Button(
                 modifier = Modifier.height(32.dp),
-                onClick = {},
+                onClick = {
+                    chat.chId?.let{chatId->
+                        cpViewModel.rechazarChat(chatId)
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(Color.Red)
             ) {
                 Text("RECHAZAR")

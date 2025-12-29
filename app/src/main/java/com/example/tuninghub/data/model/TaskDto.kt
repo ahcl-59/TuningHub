@@ -1,7 +1,5 @@
 package com.example.tuninghub.data.model
 
-import com.google.firebase.Timestamp
-
 data class TaskDto (
     val tId:String?=null,
     val titulo:String?=null,

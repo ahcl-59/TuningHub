@@ -34,6 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tuninghub.data.model.TaskDto
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.ui.screen.pages.calendar.CalendarViewModel
+import com.example.tuninghub.ui.screen.pages.chat.AcceptedChatItem
 import com.example.tuninghub.ui.theme.BrightTealBlue
 import com.example.tuninghub.ui.theme.SnowWhite
 import com.example.tuninghub.util.DateTimeFormatter
@@ -61,26 +62,39 @@ fun CalendarPage(modifier: Modifier = Modifier){
             },
             actions = {}
         )
-        if (tasks.isNotEmpty()) {
-            LazyColumn(
-                // El modifier.fillMaxSize() no es necesario aquí, ya que Column se encargará.
-                // Usamos .weight(1f) para que el LazyColumn ocupe todo el espacio restante.
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            ) {
-                items(tasks) {
-                    TaskItem(it, cViewModel)
+        when{
+            tasks==null->{
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
-        } else {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
+            tasks.isEmpty()->{
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center)
+                {
+                    Text("No hay tareas disponibles")
+                }
+            }
+            else ->{
+                LazyColumn(
+                    // El modifier.fillMaxSize() no es necesario aquí, ya que Column se encargará.
+                    // Usamos .weight(1f) para que el LazyColumn ocupe todo el espacio restante.
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) {
+                    items(tasks) {
+                        TaskItem(it,cViewModel)
+                    }
+                }
             }
         }
     }

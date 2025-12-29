@@ -4,9 +4,13 @@ import android.util.Log
 import com.example.tuninghub.data.model.ChatDto
 import com.example.tuninghub.data.model.ChatStatus
 import com.example.tuninghub.data.model.MessageDto
+import com.google.android.gms.common.config.GservicesValue.value
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import kotlin.String
 import kotlin.collections.List
@@ -18,7 +22,7 @@ class ChatRepository {
     private val timestampNow = FieldValue.serverTimestamp()
 
 
-    //CREAR CHAT
+    //CREAR CHAT -> esto ocurre en las cards desde HomePageViewModel
     suspend fun crearChat(chatId: String,myId:String) {
         val chatPath = firestore.collection("chats").document(chatId)
         val snapshot = chatPath.get().await()
@@ -35,15 +39,22 @@ class ChatRepository {
             )
         }
     }
-
-    fun actualizarStatus(chatId: String) {
+    //Uso desde ChatPageViewModel -> botones Aceptar y Rechazar
+    fun actualizarStatusOne(chatId: String) {
         val chatPath = firestore.collection("chats").document(chatId)
         chatPath.update(
             "status", ChatStatus.ACEPTADA,
             "lastUpdated", timestampNow
         )
     }
-
+    fun actualizarStatusTwo(chatId: String) {
+        val chatPath = firestore.collection("chats").document(chatId)
+        chatPath.update(
+            "status", ChatStatus.RECHAZADA,
+            "lastUpdated", timestampNow
+        )
+    }
+    //Uso en ChatViewModel
     fun sendMessage(chatId: String, senderId: String, text: String) {
         val chatPath = firestore.collection("chats").document(chatId)
         val messagePath = firestore.collection("chats")
@@ -94,7 +105,7 @@ class ChatRepository {
     fun deleteMessage(chId: String, msgId: String) {
 
     }
-
+    //Comprobación desde HomePageViewModel
     suspend fun getCurrentChat(chId: String): ChatDto? {
         return try {
             val snapshot = firestore.collection("chats").document(chId).get().await()
@@ -112,27 +123,56 @@ class ChatRepository {
     }
 
     //Para ChatPage
-    suspend fun getAcceptedUserChats(userId: String): List<ChatDto> {
-        return try {
-            firestore.collection("chats").whereArrayContains("participantes", userId)
-                .whereEqualTo("status", ChatStatus.ACEPTADA.name).get().await().documents.mapNotNull { snapshot ->
-                    snapshot.toObject(ChatDto::class.java)
-                }
-        } catch (e: Exception) {
-            emptyList()
+    //REVISAR
+    fun getAcceptedUserChats(userId: String): Flow<List<ChatDto>> = callbackFlow {
+        val query = firestore.collection("chats").whereArrayContains("participantes", userId)
+            .whereEqualTo("status", ChatStatus.ACEPTADA.name)
+
+        val listener = query.addSnapshotListener { snapshot, error ->
+
+            if (error != null) {
+                close(error)
+                return@addSnapshotListener
+            }
+
+            val chatList = snapshot?.documents?.mapNotNull { snap ->
+                snap.toObject(ChatDto::class.java)
+            } ?: emptyList()
+            chatList?.let { trySend(it) }
         }
+        awaitClose {listener.remove()}
     }
 
-    suspend fun getPendingUserChats(userId: String): List<ChatDto> {
+    fun getPendingUserChats(userId: String): Flow<List<ChatDto>> = callbackFlow {
+        val query = firestore.collection("chats").whereArrayContains("participantes", userId)
+            .whereEqualTo("status", ChatStatus.PENDIENTE.name)
+
+        val listener = query.addSnapshotListener { snapshot, error ->
+
+            if (error != null) {
+                close(error)
+                return@addSnapshotListener
+            }
+
+            val chatList = snapshot?.documents?.mapNotNull { snap ->
+                snap.toObject(ChatDto::class.java)
+            }?.filter{it.createdBy != userId} ?: emptyList()
+            chatList?.let { trySend(it) }
+        }
+        awaitClose {listener.remove()}
+    }
+
+    /*suspend fun getPendingUserChats(userId: String): List<ChatDto> {
         return try {
-            firestore.collection("chats").whereArrayContains("participantes", userId)
+            firestore.collection("chats").whereArrayContains("participantes",userId)
                 .whereEqualTo("status", ChatStatus.PENDIENTE.name).get().await().documents.mapNotNull { snapshot ->
                     snapshot.toObject(ChatDto::class.java)
-                }
+                }//esto para filtrar aquellos que son para nosotros, pero creados por otherUser
+                .filter{it.createdBy != userId}
         } catch (e: Exception) {
             emptyList()
         }
-    }
+    }*/
 }
 
 

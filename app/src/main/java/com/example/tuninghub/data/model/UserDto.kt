@@ -1,7 +1,5 @@
 package com.example.tuninghub.data.model
 
-import android.net.Uri
-
 data class UserDto(
     val uid: String?=null,
     val nombre: String?=null,

@@ -36,13 +36,24 @@ class ChatPageViewModel: ViewModel() {
     private fun getAcceptedExistingChats() {
         viewModelScope.launch {//corrutina para leer la info
 
-            val acceptedChatList: List<ChatDto> = withContext(Dispatchers.IO) {
-                chRepository.getAcceptedUserChats(repository.getCurrentUserId()!!)
+            chRepository.getAcceptedUserChats(repository.getCurrentUserId()!!)
+                .collect { updatedList ->
+                    _acceptedChats.value = updatedList
+
             }
-            _acceptedChats.value = acceptedChatList
         }
     }
     private fun getPendingExistingChats() {
+        viewModelScope.launch {//corrutina para leer la info
+
+            chRepository.getPendingUserChats(repository.getCurrentUserId()!!)
+                .collect { updatedList ->
+                    _pendingChats.value = updatedList
+
+                }
+        }
+    }
+    /*private fun getPendingExistingChats() {
         viewModelScope.launch {//corrutina para leer la info
             try {
                 Log.d("ChatVM", "Iniciando carga de chats pendientes...")
@@ -56,7 +67,7 @@ class ChatPageViewModel: ViewModel() {
 
             }
         }
-    }
+    }*/
     fun getMyChatUserId():String?{
         return repository.getCurrentUserId()
     }
@@ -67,7 +78,13 @@ class ChatPageViewModel: ViewModel() {
 
     fun aceptarChat(chatId:String){
         viewModelScope.launch{
-            chRepository.actualizarStatus(chatId)
+            chRepository.actualizarStatusOne(chatId)
+        }
+    }
+
+    fun rechazarChat(chatId:String){
+        viewModelScope.launch{
+            chRepository.actualizarStatusTwo(chatId)
         }
     }
 }

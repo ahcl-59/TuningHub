@@ -46,6 +46,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -352,7 +353,6 @@ fun CreateTaskDialog(
     val format = DateTimeFormatter()
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Crear tarea") },
         text = {
 
             Column(verticalArrangement = Arrangement.Center) {
@@ -372,6 +372,10 @@ fun CreateTaskDialog(
                         )
                     }
                 }
+                Box(){
+                    Text("CREAR TAREA", fontSize = 40.sp)
+                }
+
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = titulo,
@@ -388,18 +392,23 @@ fun CreateTaskDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    TextButton(onClick = {
-                        initialDatePicked = true
-                        showDatePicker = true
-                    }) {
-                        Text("Inicio: ${format.formatDate(fecInicio)}")
+                    Box(modifier=Modifier.weight(1f)){
+                        TextButton(onClick = {
+                            initialDatePicked = true
+                            showDatePicker = true
+                        }) {
+                            Text("Inicio: ${format.formatDate(fecInicio)}")
+                        }
                     }
-                    TextButton(onClick = {
-                        initialDatePicked = true
-                        showDatePicker = true
-                    }) {
-                        Text("Fin: ${format.formatDate(fecFin)}")
+                    Box(modifier=Modifier.weight(1f)){
+                        TextButton(onClick = {
+                            initialDatePicked = true
+                            showDatePicker = true
+                        }) {
+                            Text("Fin: ${format.formatDate(fecFin)}")
+                        }
                     }
+
                 }
             }
         },
