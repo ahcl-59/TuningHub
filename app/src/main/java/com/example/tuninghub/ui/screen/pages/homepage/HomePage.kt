@@ -3,6 +3,7 @@ package com.example.tuninghub.ui.screen.pages.homepage
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +24,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,6 +35,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -70,14 +74,17 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.tuninghub.R
 import com.example.tuninghub.data.model.MusicianDto
+import com.example.tuninghub.ui.screen.pages.chat.ChatViewModel
 import com.example.tuninghub.ui.theme.BrightTealBlue
+import com.example.tuninghub.ui.theme.DarkOrange
+import com.example.tuninghub.ui.theme.DustGrey
 import com.example.tuninghub.ui.theme.SnowWhite
 import com.example.tuninghub.util.ChatIdGenerator
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomePage(modifier: Modifier = Modifier,navController: NavController) {
+fun HomePage(modifier: Modifier = Modifier, navController: NavController) {
     val viewModel: HomePageViewModel = viewModel()
     val musicians = viewModel.musicians.collectAsState()
 
@@ -107,7 +114,7 @@ fun HomePage(modifier: Modifier = Modifier,navController: NavController) {
                 modifier = Modifier.weight(1f)
             ) {
                 items(musicians.value) {
-                    MusicianItem(it, viewModel,navController)
+                    MusicianItem(it, viewModel, navController)
                 }
             }
         } else {
@@ -120,7 +127,6 @@ fun HomePage(modifier: Modifier = Modifier,navController: NavController) {
                 CircularProgressIndicator()
             }
         }
-
     }
 }
 
@@ -128,7 +134,7 @@ fun HomePage(modifier: Modifier = Modifier,navController: NavController) {
 fun MusicianItem(
     musician: MusicianDto,
     hpViewModel: HomePageViewModel,
-    navController: NavController
+    navController: NavController,
 ) {
     var showDialog by remember { mutableStateOf(false) }
     Row(
@@ -163,6 +169,7 @@ fun MusicianItem(
                 fontSize = 12.sp
             )
         }
+
         //Caja con el icono de envío de mensajes
         Box(
             modifier = Modifier
@@ -175,7 +182,7 @@ fun MusicianItem(
                     val chatId = ChatIdGenerator().getChatId(otherUid!!)
 
                     navController.navigate("chat_screen/${chatId}")
-                    Log.d("Chat","El id es ${chatId}")
+                    Log.d("Chat", "El id es ${chatId}")
                 },
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
@@ -190,17 +197,26 @@ fun MusicianItem(
         Spacer(modifier = Modifier.height(2.dp))
     }
     //Si el MusicianItem existe, puedo hacer click y ver su perfil
-    if(showDialog){
-        MusicianCard(hpViewModel, {showDialog=false})
+    if (showDialog) {
+        MusicianCard(hpViewModel,{ showDialog = false },navController)
     }
 }
 
 @Composable
 fun MusicianCard(
     hpViewModel: HomePageViewModel,
-    onDismiss:()->Unit
-){
+    onDismiss: () -> Unit,
+    navController:NavController
+) {
     val selectedMusician by hpViewModel.oneMusician.collectAsState()
+    val chatState by hpViewModel.chat.collectAsState()
+
+    LaunchedEffect(selectedMusician?.uid) {
+        selectedMusician?.uid?.let{ id ->
+            hpViewModel.checkOnChatStatus(id)
+        }
+    }
+
     Dialog(
         onDismissRequest = {
             onDismiss()
@@ -210,174 +226,235 @@ fun MusicianCard(
         Card(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
-                .fillMaxHeight(0.8f),
+                .fillMaxHeight(0.85f),
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(10.dp)
         ) {
-
-            Box(
-                modifier=Modifier.padding(2.dp).align(Alignment.End)
-            ){
-                IconButton(
-                    onClick = {onDismiss()},
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = Red
-                    )
-                ){
-
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Cerrar",
-                        tint = SnowWhite
-                    )
-                }
-            }
-            // Aquí va todo el contenido del perfil usando 'selectedMusician'
-            LazyColumn(Modifier.padding(start=16.dp,end=16.dp)) {
-                item {
-                    //PRIMERA SECCIÓN
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(SnowWhite)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .align(Alignment.End)
+                ) {
+                    IconButton(
+                        onClick = { onDismiss() },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = Red
+                        )
                     ) {
-                        Text(text = "${selectedMusician?.nombre}", fontFamily = Monospace, fontSize = 20.sp)
-                        Text(
-                            text = "${selectedMusician?.apellido}",
-                            fontFamily = Monospace,
-                            fontSize = 30.sp,
-                            maxLines = 2
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Cerrar",
+                            tint = SnowWhite
                         )
-                        Spacer(modifier=Modifier.height(10.dp))
-                        val imagePainter = if (selectedMusician?.fotoPerfil.isNullOrEmpty()) {
-                            painterResource(id = R.drawable.avatar_default)
-                        } else {
-                            // De lo contrario, carga la imagen de forma asíncrona desde la URL
-                            rememberAsyncImagePainter(selectedMusician?.fotoPerfil)
-                        }
-                        Image(
-                            painter = imagePainter,
-                            contentDescription = "Foto de perfil",
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier
-                                .size(140.dp)
-                                .clip(CircleShape)
-                                .border(border = BorderStroke(2.dp, Color.Black), CircleShape)
-                        )
-                        Spacer(modifier=Modifier.height(10.dp))
-
                     }
-                    //SEGUNDA SECCIÓN
-                    Column() {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            TextField(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(end = 8.dp),
-                                value = selectedMusician?.ciudad ?: "",
-                                onValueChange = {},
-                                readOnly = true,
-                                textStyle = LocalTextStyle.current,
-                                label = { Text("Ciudad") },
-                                colors = TextFieldDefaults.colors(
-                                    focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent,
-                                    focusedContainerColor = Color.Transparent,
-                                    unfocusedContainerColor = Color.Transparent
-                                )
-                            )
-                            TextField(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(start = 8.dp),
-                                value = selectedMusician?.instrumento ?: "",
-                                onValueChange = {},
-                                readOnly = true,
-                                textStyle = LocalTextStyle.current,
-                                label = { Text("Instrumento") },
-                                colors = TextFieldDefaults.colors(
-                                    focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent,
-                                    focusedContainerColor = Color.Transparent,
-                                    unfocusedContainerColor = Color.Transparent
-                                )
-                            )
-                        }
-                        //TERCERA (ÚLTIMA) SECCIÓN
-                        TextField(
-                            value = selectedMusician?.situacionLaboral ?: "",
-                            onValueChange = {},
-                            readOnly = true,
-                            textStyle = LocalTextStyle.current,
-                            label = { Text("Situación laboral") },
-                            colors = TextFieldDefaults.colors(
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent,
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent
-                            )
-                        )
-                        TextField(
-                            value = selectedMusician?.bio ?: "",
-                            onValueChange = {},
-                            readOnly = true,
-                            textStyle = LocalTextStyle.current,
-                            label = { Text("BIO") },
-                            maxLines = 8,
-                            colors = TextFieldDefaults.colors(
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent,
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent
-                            )
-                        )
-                        Spacer(Modifier.height(20.dp))
+                }
+                // Aquí va todo el contenido del perfil usando 'selectedMusician'
+                LazyColumn(
+                    Modifier
+                        .padding(start = 16.dp, end = 16.dp)
+                        .weight(1f)
+                ) {
+                    item {
+                        //PRIMERA SECCIÓN
                         Column(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "ACTIVIDAD ARTÍSTICA",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = Color.Gray,
-                                textAlign = TextAlign.Center
+                                text = "${selectedMusician?.nombre}",
+                                fontFamily = Monospace,
+                                fontSize = 20.sp
                             )
-                            Spacer(Modifier.height(4.dp))
-                            if (selectedMusician?.enlace.isNullOrBlank() || !selectedMusician?.enlace?.startsWith("http")!!) return@item
-
                             Text(
-                                text = buildAnnotatedString {
-                                    // Utilizamos withLink y LinkAnnotation.Url
-                                    withLink(
-                                        LinkAnnotation.Url(
-                                            url = selectedMusician?.enlace!!, // La URL que quieres abrir
-                                            TextLinkStyles(
-                                                style = SpanStyle(
-                                                    color = Color.Blue,
-                                                    textDecoration = TextDecoration.Underline
-                                                ),
-                                                pressedStyle = SpanStyle(
-                                                    color = Color(0xFF3E62FA)
-                                                ),
-                                                )
-                                        )
-                                    ) {
-                                        append(selectedMusician?.enlace!!) // El texto visible del enlace
-                                    }
-                                },
-                                style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Center
+                                text = "${selectedMusician?.apellido}",
+                                fontFamily = Monospace,
+                                fontSize = 30.sp,
+                                maxLines = 2
                             )
+                            Spacer(modifier = Modifier.height(10.dp))
+                            val imagePainter = if (selectedMusician?.fotoPerfil.isNullOrEmpty()) {
+                                painterResource(id = R.drawable.avatar_default)
+                            } else {
+                                // De lo contrario, carga la imagen de forma asíncrona desde la URL
+                                rememberAsyncImagePainter(selectedMusician?.fotoPerfil)
+                            }
+                            Image(
+                                painter = imagePainter,
+                                contentDescription = "Foto de perfil",
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier
+                                    .size(140.dp)
+                                    .clip(CircleShape)
+                                    .border(border = BorderStroke(2.dp, Color.Black), CircleShape)
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                        }
+                        //SEGUNDA SECCIÓN
+                        Column {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                TextField(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(end = 8.dp),
+                                    value = selectedMusician?.ciudad ?: "",
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    textStyle = LocalTextStyle.current,
+                                    label = { Text("Ciudad") },
+                                    colors = TextFieldDefaults.colors(
+                                        focusedIndicatorColor = Color.Transparent,
+                                        unfocusedIndicatorColor = Color.Transparent,
+                                        focusedContainerColor = Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent
+                                    )
+                                )
+                                TextField(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(start = 8.dp),
+                                    value = selectedMusician?.instrumento ?: "",
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    textStyle = LocalTextStyle.current,
+                                    label = { Text("Instrumento") },
+                                    colors = TextFieldDefaults.colors(
+                                        focusedIndicatorColor = Color.Transparent,
+                                        unfocusedIndicatorColor = Color.Transparent,
+                                        focusedContainerColor = Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent
+                                    )
+                                )
+                            }
+                            //TERCERA SECCIÓN
+                            TextField(
+                                value = selectedMusician?.situacionLaboral ?: "",
+                                onValueChange = {},
+                                readOnly = true,
+                                textStyle = LocalTextStyle.current,
+                                label = { Text("Situación laboral") },
+                                colors = TextFieldDefaults.colors(
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent
+                                )
+                            )
+                            TextField(
+                                value = selectedMusician?.bio ?: "",
+                                onValueChange = {},
+                                readOnly = true,
+                                textStyle = LocalTextStyle.current,
+                                label = { Text("BIO") },
+                                maxLines = 8,
+                                colors = TextFieldDefaults.colors(
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent
+                                )
+                            )
+                            Spacer(Modifier.height(20.dp))
+                            //CUARTA (ÚLTIMA) SECCIÓN: SECCIÓN ARTÍSTICA
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "ACTIVIDAD ARTÍSTICA",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = Color.Gray,
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(Modifier.height(4.dp))
+                                if (selectedMusician?.enlace.isNullOrBlank() || !selectedMusician?.enlace?.startsWith(
+                                        "http"
+                                    )!!
+                                ) return@item
+
+                                Text(
+                                    text = buildAnnotatedString {
+                                        // Utilizamos withLink y LinkAnnotation.Url
+                                        withLink(
+                                            LinkAnnotation.Url(
+                                                url = selectedMusician?.enlace!!, // La URL que quieres abrir
+                                                TextLinkStyles(
+                                                    style = SpanStyle(
+                                                        color = Color.Blue,
+                                                        textDecoration = TextDecoration.Underline
+                                                    ),
+                                                    pressedStyle = SpanStyle(
+                                                        color = Color(0xFF3E62FA)
+                                                    ),
+                                                )
+                                            )
+                                        ) {
+                                            append(selectedMusician?.enlace!!) // El texto visible del enlace
+                                        }
+                                    },
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
                         }
                     }
                 }
+                //Barra inferior
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    tonalElevation = 2.dp,
+                    color = SnowWhite
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        //Creamos una tupla de variables
+                        val (text, color, isEnabled) = when {
+                            // CASO A: No hay rastro de chat en la DB (chatState es null)
+                            chatState == null ->
+                                Triple("+ Conectar", DarkOrange, true)
 
+                            // CASO B: El chat existe pero está en "PENDIENTE"
+                            chatState?.status?.name == "PENDIENTE" ->
+                                Triple("Pendiente...", Color.Gray, false) // Botón gris y desactivado
+
+                            // CASO C: El chat ya ha sido aceptado
+                            chatState?.status?.name == "ACEPTADA" ->
+                                Triple("Enviar Mensaje", BrightTealBlue, true) // Botón azul y activo
+
+                            // Por defecto (por seguridad)
+                            else -> Triple("+ Conectar", DarkOrange, true)
+                        }
+
+                        Button(
+                            modifier = Modifier.fillMaxWidth(),
+                            enabled = isEnabled,
+                            colors = ButtonDefaults.buttonColors(color),
+                            onClick = {
+                                hpViewModel.requestMusician(selectedMusician?.uid!!) { chatId ->
+                                    navController.navigate("chat_screen/$chatId")
+                                }
+                            }
+                        ) {
+                            Text(text)
+                        }
+                    }
+                }
             }
-
         }
     }
 }
+
 

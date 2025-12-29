@@ -1,11 +1,10 @@
-package com.example.tuninghub.ui.screen.pages
+package com.example.tuninghub.ui.screen.pages.calendar
 
 import android.content.Context
 import android.content.Intent
 import android.provider.CalendarContract
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tuninghub.data.model.ChatDto
 import com.example.tuninghub.data.model.TaskDto
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.data.repository.CalendarRepository
@@ -50,7 +49,7 @@ class CalendarViewModel: ViewModel() {
         }
     }
 
-    fun saveTask(task:TaskDto){
+    fun saveTask(task: TaskDto){
         cRepository.guardarEventoEnFirebase(task)
     }
 

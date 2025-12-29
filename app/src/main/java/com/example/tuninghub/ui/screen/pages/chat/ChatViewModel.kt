@@ -3,6 +3,7 @@ package com.example.tuninghub.ui.screen.pages.chat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.tuninghub.data.model.ChatDto
 import com.example.tuninghub.data.model.MessageDto
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.data.repository.ChatRepository
@@ -40,6 +41,8 @@ class ChatViewModel(
     val messages: StateFlow<List<MessageDto>> = _messages
 
 
+
+
     init {
         //ChatScreen
         cargarOtherUser()
@@ -47,6 +50,8 @@ class ChatViewModel(
             listMessages()
         }
     }
+
+    //Para obtener sólo el id propio
     fun getMyChatUserId():String?{
         return repository.getCurrentUserId()
     }

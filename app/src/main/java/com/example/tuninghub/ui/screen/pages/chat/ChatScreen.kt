@@ -80,7 +80,7 @@ import com.example.tuninghub.R
 import com.example.tuninghub.data.model.MessageDto
 import com.example.tuninghub.data.model.TaskDto
 import com.example.tuninghub.data.model.UserDto
-import com.example.tuninghub.ui.screen.pages.CalendarViewModel
+import com.example.tuninghub.ui.screen.pages.calendar.CalendarViewModel
 import com.example.tuninghub.ui.screen.pages.homepage.MusicianCard
 import com.example.tuninghub.ui.screen.pages.homepage.MusicianItem
 import com.example.tuninghub.ui.screen.pages.profile.ProfileViewModel

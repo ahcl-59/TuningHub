@@ -1,8 +1,10 @@
 package com.example.tuninghub.ui.screen.pages.chat
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tuninghub.data.model.ChatDto
+import com.example.tuninghub.data.model.ChatStatus
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.data.repository.ChatRepository
 import com.example.tuninghub.data.repository.UserRepository
@@ -19,21 +21,40 @@ class ChatPageViewModel: ViewModel() {
     val repository = UserRepository()
 
     //Listado de chats
-    private val _chats = MutableStateFlow<List<ChatDto>>(emptyList())
-    val chats: StateFlow<List<ChatDto>> = _chats
+    private val _acceptedChats = MutableStateFlow<List<ChatDto>>(emptyList())
+    val acceptedChats: StateFlow<List<ChatDto>> = _acceptedChats
+
+    private val _pendingChats = MutableStateFlow<List<ChatDto>>(emptyList())
+    val pendingChats: StateFlow<List<ChatDto>> = _pendingChats
 
     init {
         //ChatPage
-        getExistingChats()
+        getAcceptedExistingChats()
+        getPendingExistingChats()
     }
 
-    private fun getExistingChats() {
+    private fun getAcceptedExistingChats() {
         viewModelScope.launch {//corrutina para leer la info
 
-            val chatList: List<ChatDto> = withContext(Dispatchers.IO) {
-                chRepository.getUserChats(repository.getCurrentUserId()!!)
+            val acceptedChatList: List<ChatDto> = withContext(Dispatchers.IO) {
+                chRepository.getAcceptedUserChats(repository.getCurrentUserId()!!)
             }
-            _chats.value = chatList
+            _acceptedChats.value = acceptedChatList
+        }
+    }
+    private fun getPendingExistingChats() {
+        viewModelScope.launch {//corrutina para leer la info
+            try {
+                Log.d("ChatVM", "Iniciando carga de chats pendientes...")
+                val pendingChatList: List<ChatDto> = withContext(Dispatchers.IO) {
+                    chRepository.getPendingUserChats(repository.getCurrentUserId()!!)
+                }
+                Log.d("ChatVM", "Chats recibidos: ${pendingChatList.size}")
+                _pendingChats.value = pendingChatList
+            }catch(e:Exception){
+                Log.e("ChatVM", "Error cargando chats", e)
+
+            }
         }
     }
     fun getMyChatUserId():String?{
@@ -42,5 +63,11 @@ class ChatPageViewModel: ViewModel() {
 
     suspend fun getOneMusician(uid:String): UserDto? {
         return repository.getUser(uid)
+    }
+
+    fun aceptarChat(chatId:String){
+        viewModelScope.launch{
+            chRepository.actualizarStatus(chatId)
+        }
     }
 }
