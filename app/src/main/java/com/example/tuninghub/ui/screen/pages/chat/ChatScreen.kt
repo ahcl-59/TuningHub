@@ -120,12 +120,11 @@ fun ChatScreen(modifier: Modifier, navController: NavController, chatViewModel: 
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController.navigate("pestaniaChatPage")
+                            navController.navigate("pestania_chatpage")
                             {
                                 launchSingleTop = true
                                 popUpTo("home") { inclusive = false }
                             }
-
                         },
                         modifier = Modifier
                             .padding(start = 10.dp)

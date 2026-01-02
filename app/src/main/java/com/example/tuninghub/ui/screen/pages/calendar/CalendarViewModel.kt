@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CalendarViewModel: ViewModel() {
+class CalendarViewModel : ViewModel() {
 
     private val cRepository = CalendarRepository()
     private val repository = UserRepository()
@@ -24,7 +24,7 @@ class CalendarViewModel: ViewModel() {
     val tasks: StateFlow<List<TaskDto>> = _tasks
 
 
-    init{
+    init {
         getExistingTasks()
     }
 
@@ -49,24 +49,24 @@ class CalendarViewModel: ViewModel() {
         }
     }
 
-    fun saveTask(task: TaskDto){
+    fun saveTask(task: TaskDto) {
         cRepository.guardarEventoEnFirebase(task)
     }
 
     private fun getExistingTasks() {
         viewModelScope.launch {//corrutina para leer la info
-
-            val taskList: List<TaskDto> = withContext(Dispatchers.IO) {
-                cRepository.getUserTasks(repository.getCurrentUserId()!!)
-            }
-            _tasks.value = taskList
+            cRepository.getUserTasks(repository.getCurrentUserId()!!)
+                .collect { taskUpdatedList ->
+                    _tasks.value = taskUpdatedList
+                }
         }
     }
 
-    fun getMyUserId():String?{
+    fun getMyUserId(): String? {
         return repository.getCurrentUserId()
     }
-    suspend fun getOneMusician(uid:String): UserDto? {
+
+    suspend fun getOneMusician(uid: String): UserDto? {
         return repository.getUser(uid)
     }
 }

@@ -104,7 +104,7 @@ class HomePageViewModel: ViewModel(){
                 }
                 chatExists.status == ChatStatus.RECHAZADA ->{
                     Log.d("ChatMatch","Hay una petición rechazada")
-                    chRepository.crearChat(chatId,myId)
+                    chRepository.actualizarStatusThree(chatId)
                     checkOnChatStatus(otherUserId)
                 }
             }

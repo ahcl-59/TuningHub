@@ -36,6 +36,7 @@ import androidx.navigation.NavController
 import com.example.tuninghub.util.AppUtil
 import com.example.tuninghub.R
 import com.example.tuninghub.ui.screen.auth.AuthViewModel
+import com.example.tuninghub.ui.theme.SurfTurquoise
 
 
 @Composable
@@ -148,6 +149,7 @@ fun LoginScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(60.dp),
+                colors = ButtonDefaults.buttonColors(SurfTurquoise),
                 enabled = email.isNotBlank() && password.isNotBlank() && !isLoading
             ) {
                 Text(text = "Login", fontSize = 22.sp)

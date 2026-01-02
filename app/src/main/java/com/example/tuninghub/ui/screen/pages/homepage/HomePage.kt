@@ -1,6 +1,5 @@
 package com.example.tuninghub.ui.screen.pages.homepage
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,7 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -53,7 +53,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Red
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -74,12 +76,9 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.tuninghub.R
 import com.example.tuninghub.data.model.MusicianDto
-import com.example.tuninghub.ui.screen.pages.chat.ChatViewModel
 import com.example.tuninghub.ui.theme.BrightTealBlue
 import com.example.tuninghub.ui.theme.DarkOrange
-import com.example.tuninghub.ui.theme.DustGrey
 import com.example.tuninghub.ui.theme.SnowWhite
-import com.example.tuninghub.util.ChatIdGenerator
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,7 +100,9 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController) {
                     fontFamily = FontFamily.SansSerif
                 )
             },
-            actions = {}
+            actions = {
+
+            }
         )
         // El LazyColumn ocupa el resto del espacio disponible.
         // Ahora, el 'modifier' que se pasa a HomePage ya tiene el PaddingValues
@@ -159,19 +160,20 @@ fun MusicianItem(
                 .border(border = BorderStroke(1.dp, Color.Black), shape = CircleShape),
             contentDescription = "Imagen del músico ${musician.nombre}",
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         //Caja con datos
-        Box(modifier = Modifier.padding(10.dp)) {
+        Box(modifier = Modifier.padding(15.dp)) {
             Text(
-                text = "${musician.nombre.orEmpty()}  ${musician.apellido.orEmpty()}\n${musician.instrumento.orEmpty()}",
+                text = "${musician.nombre.orEmpty()} ${musician.apellido.orEmpty()}\n${musician.instrumento.orEmpty()}",
                 color = BrightTealBlue,
                 fontFamily = FontFamily.SansSerif,
-                fontSize = 12.sp
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
             )
         }
 
         //Caja con el icono de envío de mensajes
-        Box(
+        /*Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -193,7 +195,7 @@ fun MusicianItem(
                     contentDescription = "Enviar mensaje"
                 )
             }
-        }
+        }*/
         Spacer(modifier = Modifier.height(2.dp))
     }
     //Si el MusicianItem existe, puedo hacer click y ver su perfil
@@ -381,29 +383,87 @@ fun MusicianCard(
                                     )!!
                                 ) return@item
 
-                                Text(
-                                    text = buildAnnotatedString {
-                                        // Utilizamos withLink y LinkAnnotation.Url
-                                        withLink(
-                                            LinkAnnotation.Url(
-                                                url = selectedMusician?.enlace!!, // La URL que quieres abrir
-                                                TextLinkStyles(
-                                                    style = SpanStyle(
-                                                        color = Color.Blue,
-                                                        textDecoration = TextDecoration.Underline
-                                                    ),
-                                                    pressedStyle = SpanStyle(
-                                                        color = Color(0xFF3E62FA)
-                                                    ),
-                                                )
-                                            )
+                                if (selectedMusician?.enlace!!.contains("youtube.com") || selectedMusician?.enlace!!.contains("youtu.be")) {
+                                    // 1. Extraer el ID del video
+                                    val videoId = when {
+                                        selectedMusician?.enlace!!.contains("v=") -> selectedMusician?.enlace!!.substringAfter("v=").substringBefore("&")
+                                        selectedMusician?.enlace!!.contains("youtu.be/") -> selectedMusician?.enlace!!.substringAfter("youtu.be/")
+                                        else -> null
+                                    }
+
+                                    if (videoId != null) {
+                                        val uriHandler = LocalUriHandler.current
+
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth()
                                         ) {
-                                            append(selectedMusician?.enlace!!) // El texto visible del enlace
+                                            Box(
+                                                modifier = Modifier
+                                                    .fillMaxWidth(0.9f)
+                                                    .aspectRatio(16f / 9f)
+                                                    .clip(RoundedCornerShape(12.dp))
+                                                    .clickable { uriHandler.openUri(selectedMusician?.enlace!!) },
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                // Imagen de la miniatura (Calidad estándar: hqdefault o 0.jpg)
+                                                AsyncImage(
+                                                    model = "https://img.youtube.com/vi/$videoId/hqdefault.jpg",
+                                                    contentDescription = "Ver video en YouTube",
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    contentScale = ContentScale.Crop,
+                                                    placeholder = ColorPainter(Color.DarkGray)
+                                                )
+
+                                                // Botón de Play superpuesto
+                                                Surface(
+                                                    shape = CircleShape,
+                                                    color = Color.Black.copy(alpha = 0.6f),
+                                                    modifier = Modifier.size(50.dp)
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.PlayArrow,
+                                                        contentDescription = null,
+                                                        tint = Color.White,
+                                                        modifier = Modifier.padding(8.dp)
+                                                    )
+                                                }
+                                            }
+                                            Text(
+                                                text = "Reproducir video",
+                                                style = MaterialTheme.typography.labelMedium,
+                                                color = Color.Gray,
+                                                modifier = Modifier.padding(top = 4.dp)
+                                            )
                                         }
-                                    },
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    textAlign = TextAlign.Center
-                                )
+                                    }
+
+                                }else{
+                                    Text(
+                                        text = buildAnnotatedString {
+                                            // Utilizamos withLink y LinkAnnotation.Url
+                                            withLink(
+                                                LinkAnnotation.Url(
+                                                    url = selectedMusician?.enlace!!, // La URL que quieres abrir
+                                                    TextLinkStyles(
+                                                        style = SpanStyle(
+                                                            color = Color.Blue,
+                                                            textDecoration = TextDecoration.Underline
+                                                        ),
+                                                        pressedStyle = SpanStyle(
+                                                            color = Color(0xFF3E62FA)
+                                                        ),
+
+                                                        )
+                                                )
+                                            ) {
+                                                append(selectedMusician?.enlace!!) // El texto visible del enlace
+                                            }
+                                        },
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
                             }
                         }
                     }

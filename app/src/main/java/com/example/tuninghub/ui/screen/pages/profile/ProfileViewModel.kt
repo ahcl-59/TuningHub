@@ -18,13 +18,21 @@ class ProfileViewModel() : ViewModel() {
     val currentUser: StateFlow<UserDto?> = _currentUser
 
     val uid = repository.getCurrentUserId()
+
+    init {
+        getCurrentUser()
+    }
+
+
     //Recuperar datos del usuario loggeado
     fun getCurrentUser() {
         Log.d("ProfileVM", "UID actual: $uid")
         viewModelScope.launch {
-            val user = repository.getUser(uid!!)
-            Log.d("ProfileVM", "Resultado de getUser(): $user")
-            _currentUser.value = user
+            if (uid != null) {
+                val user = repository.getUser(uid!!)
+                Log.d("ProfileVM", "Resultado de getUser(): $user")
+                _currentUser.value = user
+            }
         }
     }
 
@@ -36,11 +44,11 @@ class ProfileViewModel() : ViewModel() {
         ciudad: String,
         bio: String,
         nuevaImagenUri: Uri?,
-        enlace: String
+        enlace: String,
     ) {
         repository.updateUser(
             nombre, apellido, instrumento, situacion,
-            ciudad, bio,nuevaImagenUri,enlace,
+            ciudad, bio, nuevaImagenUri, enlace,
             onResult = { isSuccess, errorMessage ->
                 if (isSuccess) {
                     // 1. Si la actualización fue exitosa, volvemos a cargar los datos
@@ -55,9 +63,9 @@ class ProfileViewModel() : ViewModel() {
         )
     }
 
-    fun deleteUser(uid:String,password:String) {
-        viewModelScope.launch{
-            repository.deleteUser(uid,password)
+    fun deleteUser(uid: String, password: String) {
+        viewModelScope.launch {
+            repository.deleteUser(uid, password)
         }
     }
 

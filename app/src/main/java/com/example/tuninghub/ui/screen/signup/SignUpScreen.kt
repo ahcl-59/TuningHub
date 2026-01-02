@@ -160,7 +160,7 @@ fun SignUpScreen(
         Spacer(modifier = Modifier.height(5.dp))
         CuadroTexto(bio, { bio = it }, "Biografía")
         Spacer(modifier = Modifier.height(5.dp))
-        CuadroTexto(enlace, { enlace = it }, "Enlace de actividad artística")
+        CuadroTexto(enlace, { enlace = it }, "Enlace de actividad artística (preferible Youtube)")
         Spacer(modifier = Modifier.height(5.dp))
         //Botón
         Button(
@@ -211,7 +211,7 @@ private fun SeleccionarSituacion(
     onOptionSelected: (String) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val options = listOf("Estudiante", "Trabajando", "Abierto a trabajar")
+    val options = listOf("Estudiante", "Trabajando", "Disponible para trabajar")
 
     ExposedDropdownMenuBox(
         modifier = Modifier.fillMaxWidth(),

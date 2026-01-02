@@ -34,6 +34,7 @@ class ChatRepository {
                     "participantes" to chatId.split("_"),
                     "status" to ChatStatus.PENDIENTE.name,
                     "createdBy" to myId,
+                    "lastMessage" to "",
                     "lastUpdated" to timestampNow
                 )
             )
@@ -54,6 +55,14 @@ class ChatRepository {
             "lastUpdated", timestampNow
         )
     }
+    fun actualizarStatusThree(chatId: String) {
+        val chatPath = firestore.collection("chats").document(chatId)
+        chatPath.update(
+            "status", ChatStatus.PENDIENTE,
+            "lastUpdated", timestampNow
+        )
+    }
+
     //Uso en ChatViewModel
     fun sendMessage(chatId: String, senderId: String, text: String) {
         val chatPath = firestore.collection("chats").document(chatId)
@@ -157,7 +166,8 @@ class ChatRepository {
             val chatList = snapshot?.documents?.mapNotNull { snap ->
                 snap.toObject(ChatDto::class.java)
             }?.filter{it.createdBy != userId} ?: emptyList()
-            chatList?.let { trySend(it) }
+
+            trySend(chatList)
         }
         awaitClose {listener.remove()}
     }

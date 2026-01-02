@@ -2,11 +2,8 @@
 
 package com.example.tuninghub.ui.screen.pages.chat
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,21 +13,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,9 +34,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -55,8 +44,6 @@ import com.example.tuninghub.R
 import com.example.tuninghub.data.model.ChatDto
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.ui.theme.BrightTealBlue
-import com.example.tuninghub.ui.theme.DarkOrange
-import com.example.tuninghub.ui.theme.SnowWhite
 import com.example.tuninghub.ui.theme.SurfTurquoise
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -103,7 +90,7 @@ fun ChatPagePending(modifier: Modifier = Modifier, navController: NavController)
                         .fillMaxWidth()
                 ) {
                     items(pendingChats) {
-                        PendingChatItem(it, cpViewModel, navController)
+                        PendingChatItem(it, cpViewModel)
                     }
                 }
             }
@@ -114,8 +101,7 @@ fun ChatPagePending(modifier: Modifier = Modifier, navController: NavController)
 @Composable
 fun PendingChatItem(
     chat: ChatDto,
-    cpViewModel: ChatPageViewModel,
-    navController: NavController,
+    cpViewModel: ChatPageViewModel
 ) {
     val userId = cpViewModel.getMyChatUserId()
     val otherUserId = chat.participantes?.first {
@@ -173,7 +159,7 @@ fun PendingChatItem(
         ) {
             //Botón ACEPTAR
             Button(
-                modifier = Modifier.height(32.dp),
+                modifier = Modifier.height(32.dp).width(130.dp),
                 onClick = {
                     chat.chId?.let{chatId->
                         cpViewModel.aceptarChat(chatId)
@@ -183,9 +169,10 @@ fun PendingChatItem(
             ) {
                 Text("ACEPTAR")
             }
+            Spacer(modifier = Modifier.height(2.dp))
             //Botón RECHAZAR
             Button(
-                modifier = Modifier.height(32.dp),
+                modifier = Modifier.height(32.dp).width(130.dp),
                 onClick = {
                     chat.chId?.let{chatId->
                         cpViewModel.rechazarChat(chatId)
@@ -195,9 +182,6 @@ fun PendingChatItem(
             ) {
                 Text("RECHAZAR")
             }
-
-
         }
-        Spacer(modifier = Modifier.height(2.dp))
     }
 }

@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.tuninghub.R
+import com.example.tuninghub.ui.theme.SurfTurquoise
 
 
 @Composable
@@ -94,6 +95,7 @@ fun EditarPerfilScreen(
             situacion = it.situacionLaboral ?: ""
             ciudad = it.ciudad ?: ""
             bio = it.bio ?: ""
+            enlace = it.enlace ?:""
         }
     }
 
@@ -195,6 +197,7 @@ fun EditarPerfilScreen(
                 Spacer(Modifier.height(16.dp))
                 //BOTÓN DE UPDATE USER
                 Button(
+                    colors = ButtonDefaults.buttonColors(SurfTurquoise),
                     onClick = {
                         user?.let {
                             profileViewModel.updateUser(
@@ -210,7 +213,7 @@ fun EditarPerfilScreen(
                     Text("Guardar Cambios")
                 }
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(5.dp))
                 //BOTÓN DELETE USER
                 Button(
                     onClick = {
@@ -220,6 +223,7 @@ fun EditarPerfilScreen(
                 ) {
                     Text("Eliminar cuenta")
                 }
+                Spacer(Modifier.height(5.dp))
                 //condicional para sacar la alerta
                 if (alertaDelete) {
                     AlertDialog(

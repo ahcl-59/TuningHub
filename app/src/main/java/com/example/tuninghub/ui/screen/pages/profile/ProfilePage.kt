@@ -6,11 +6,13 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,9 +20,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -29,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -46,7 +51,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -61,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.tuninghub.R
 import com.example.tuninghub.data.model.UserDto
@@ -78,15 +86,12 @@ fun ProfilePage(modifier: Modifier, navController: NavController) {
     // Se obtiene el estado del usuario
     val user by profileViewModel.currentUser.collectAsState()
 
-    // Cargar usuario la primera vez
-    LaunchedEffect(Unit) {
-        profileViewModel.getCurrentUser()
-        Log.d("ProfilePage", "usuario $user cargado")
-    }
+
     var showMenu by remember { mutableStateOf(false) }
     Column(
         modifier = modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(SnowWhite),
     ) {
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(DarkOrange),
@@ -147,7 +152,8 @@ fun CuerpoProfile(u: UserDto) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .background(SnowWhite),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -256,7 +262,7 @@ fun CuerpoProfile(u: UserDto) {
                 )
             )
             TextField(
-                modifier=Modifier.background(White),
+                modifier=Modifier.border(1.dp,DarkOrange),
                 value = u.bio ?: "",
                 onValueChange = {},
                 readOnly = true,
@@ -286,30 +292,87 @@ fun CuerpoProfile(u: UserDto) {
                 Spacer(Modifier.height(4.dp))
                 if (u.enlace.isNullOrBlank() || !u.enlace.startsWith("http")) return
 
-                Text(
-                    text = buildAnnotatedString {
-                        // Utilizamos withLink y LinkAnnotation.Url
-                        withLink(
-                            LinkAnnotation.Url(
-                                url = u.enlace, // La URL que quieres abrir
-                                TextLinkStyles(
-                                    style = SpanStyle(
-                                        color = Color.Blue,
-                                        textDecoration = TextDecoration.Underline
-                                    ),
-                                    pressedStyle = SpanStyle(
-                                        color = Color(0xFF3E62FA)
-                                    ),
+                if (u.enlace.contains("youtube.com") || u.enlace.contains("youtu.be")) {
+                    // 1. Extraer el ID del video
+                    val videoId = when {
+                        u.enlace.contains("v=") -> u.enlace.substringAfter("v=").substringBefore("&")
+                        u.enlace.contains("youtu.be/") -> u.enlace.substringAfter("youtu.be/")
+                        else -> null
+                    }
 
-                                    )
-                            )
+                    if (videoId != null) {
+                        val uriHandler = LocalUriHandler.current
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth()
                         ) {
-                            append(u.enlace) // El texto visible del enlace
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.9f)
+                                    .aspectRatio(16f / 9f)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .clickable { uriHandler.openUri(u.enlace) },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                // Imagen de la miniatura (Calidad estándar: hqdefault o 0.jpg)
+                                AsyncImage(
+                                    model = "https://img.youtube.com/vi/$videoId/hqdefault.jpg",
+                                    contentDescription = "Ver video en YouTube",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop,
+                                    placeholder = ColorPainter(Color.DarkGray)
+                                )
+
+                                // Botón de Play superpuesto
+                                Surface(
+                                    shape = CircleShape,
+                                    color = Color.Black.copy(alpha = 0.6f),
+                                    modifier = Modifier.size(50.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.PlayArrow,
+                                        contentDescription = null,
+                                        tint = Color.White,
+                                        modifier = Modifier.padding(8.dp)
+                                    )
+                                }
+                            }
+                            Text(
+                                text = "Reproducir video",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = Color.Gray,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
                         }
-                    },
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center
-                )
+                    }
+
+                }else{
+                    Text(
+                        text = buildAnnotatedString {
+                            // Utilizamos withLink y LinkAnnotation.Url
+                            withLink(
+                                LinkAnnotation.Url(
+                                    url = u.enlace, // La URL que quieres abrir
+                                    TextLinkStyles(
+                                        style = SpanStyle(
+                                            color = Color.Blue,
+                                            textDecoration = TextDecoration.Underline
+                                        ),
+                                        pressedStyle = SpanStyle(
+                                            color = Color(0xFF3E62FA)
+                                        ),
+
+                                        )
+                                )
+                            ) {
+                                append(u.enlace) // El texto visible del enlace
+                            }
+                        },
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }
