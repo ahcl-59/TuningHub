@@ -61,8 +61,9 @@ class HomePageViewModel: ViewModel(){
             nombre = user.nombre,
             apellido = user.apellido,
             imagen = user.fotoPerfil,
-            instrumento = user.instrumento
-            //isMatched = status //revisar esto porque no está claro
+            instrumento = user.instrumento,
+            ciudad = user.ciudad
+
         )
     }
 

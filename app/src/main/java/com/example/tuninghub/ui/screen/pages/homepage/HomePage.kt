@@ -76,9 +76,13 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.tuninghub.R
 import com.example.tuninghub.data.model.MusicianDto
+import com.example.tuninghub.ui.theme.BloodRed
 import com.example.tuninghub.ui.theme.BrightTealBlue
 import com.example.tuninghub.ui.theme.DarkOrange
+import com.example.tuninghub.ui.theme.DustGrey
+import com.example.tuninghub.ui.theme.LightOrange
 import com.example.tuninghub.ui.theme.SnowWhite
+import com.example.tuninghub.ui.theme.SurfTurquoise
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,9 +104,7 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController) {
                     fontFamily = FontFamily.SansSerif
                 )
             },
-            actions = {
-
-            }
+            actions = {}
         )
         // El LazyColumn ocupa el resto del espacio disponible.
         // Ahora, el 'modifier' que se pasa a HomePage ya tiene el PaddingValues
@@ -112,7 +114,7 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController) {
             LazyColumn(
                 // El modifier.fillMaxSize() no es necesario aquí, ya que Column se encargará.
                 // Usamos .weight(1f) para que el LazyColumn ocupe todo el espacio restante.
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).background(SnowWhite)
             ) {
                 items(musicians.value) {
                     MusicianItem(it, viewModel, navController)
@@ -141,8 +143,11 @@ fun MusicianItem(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .border(BorderStroke(1.dp, BrightTealBlue))
-            .padding(8.dp)
+            .padding(4.dp).clip(RoundedCornerShape(8.dp)).background(LightOrange)
+            .border(
+                border = BorderStroke(1.dp, SurfTurquoise),
+                shape = RoundedCornerShape(8.dp)
+            )
             .fillMaxWidth()
             .clickable {
                 //muestra el perfil
@@ -154,53 +159,37 @@ fun MusicianItem(
             placeholder = painterResource(id = R.drawable.avatar_default), // Mientras carga
             error = painterResource(id = R.drawable.avatar_default), // Si falla
             contentScale = ContentScale.Crop, // Usar Crop para llenar el círculo
-            modifier = Modifier
+            modifier = Modifier.padding(start=6.dp)
                 .size(60.dp)
                 .clip(CircleShape)
-                .border(border = BorderStroke(1.dp, Color.Black), shape = CircleShape),
+                .background(SnowWhite)
+                .border(border = BorderStroke(1.dp, DustGrey), shape = CircleShape),
             contentDescription = "Imagen del músico ${musician.nombre}",
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(30.dp))
         //Caja con datos
-        Box(modifier = Modifier.padding(15.dp)) {
+        Column (modifier = Modifier.padding(15.dp).weight(1f)) {
             Text(
-                text = "${musician.nombre.orEmpty()} ${musician.apellido.orEmpty()}\n${musician.instrumento.orEmpty()}",
+                text = "${musician.nombre.orEmpty()} ${musician.apellido.orEmpty()}",
+                color = DustGrey,
+                fontFamily = FontFamily.SansSerif,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "${musician.instrumento.orEmpty()} - ${musician.ciudad.orEmpty()}",
                 color = BrightTealBlue,
                 fontFamily = FontFamily.SansSerif,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center
             )
         }
-
-        //Caja con el icono de envío de mensajes
-        /*Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            IconButton(
-                onClick = {//navega a la pantalla y pasa la lógica de almacenamiento del chat
-                    val otherUid = musician.mid
-                    val chatId = ChatIdGenerator().getChatId(otherUid!!)
-
-                    navController.navigate("chat_screen/${chatId}")
-                    Log.d("Chat", "El id es ${chatId}")
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .size(20.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.MailOutline,
-                    contentDescription = "Enviar mensaje"
-                )
-            }
-        }*/
         Spacer(modifier = Modifier.height(2.dp))
     }
     //Si el MusicianItem existe, puedo hacer click y ver su perfil
     if (showDialog) {
-        MusicianCard(hpViewModel,{ showDialog = false },navController)
+        MusicianCard(hpViewModel, { showDialog = false }, navController)
     }
 }
 
@@ -208,13 +197,13 @@ fun MusicianItem(
 fun MusicianCard(
     hpViewModel: HomePageViewModel,
     onDismiss: () -> Unit,
-    navController:NavController
+    navController: NavController,
 ) {
     val selectedMusician by hpViewModel.oneMusician.collectAsState()
     val chatState by hpViewModel.chat.collectAsState()
 
     LaunchedEffect(selectedMusician?.uid) {
-        selectedMusician?.uid?.let{ id ->
+        selectedMusician?.uid?.let { id ->
             hpViewModel.checkOnChatStatus(id)
         }
     }
@@ -245,7 +234,7 @@ fun MusicianCard(
                     IconButton(
                         onClick = { onDismiss() },
                         colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = Red
+                            containerColor = BloodRed
                         )
                     ) {
                         Icon(
@@ -293,6 +282,7 @@ fun MusicianCard(
                                 modifier = Modifier
                                     .size(140.dp)
                                     .clip(CircleShape)
+                                    .background(SnowWhite)
                                     .border(border = BorderStroke(2.dp, Color.Black), CircleShape)
                             )
                             Spacer(modifier = Modifier.height(10.dp))
@@ -383,11 +373,20 @@ fun MusicianCard(
                                     )!!
                                 ) return@item
 
-                                if (selectedMusician?.enlace!!.contains("youtube.com") || selectedMusician?.enlace!!.contains("youtu.be")) {
+                                if (selectedMusician?.enlace!!.contains("youtube.com") || selectedMusician?.enlace!!.contains(
+                                        "youtu.be"
+                                    )
+                                ) {
                                     // 1. Extraer el ID del video
                                     val videoId = when {
-                                        selectedMusician?.enlace!!.contains("v=") -> selectedMusician?.enlace!!.substringAfter("v=").substringBefore("&")
-                                        selectedMusician?.enlace!!.contains("youtu.be/") -> selectedMusician?.enlace!!.substringAfter("youtu.be/")
+                                        selectedMusician?.enlace!!.contains("v=") -> selectedMusician?.enlace!!.substringAfter(
+                                            "v="
+                                        ).substringBefore("&")
+
+                                        selectedMusician?.enlace!!.contains("youtu.be/") -> selectedMusician?.enlace!!.substringAfter(
+                                            "youtu.be/"
+                                        )
+
                                         else -> null
                                     }
 
@@ -396,7 +395,9 @@ fun MusicianCard(
 
                                         Column(
                                             horizontalAlignment = Alignment.CenterHorizontally,
-                                            modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth()
+                                            modifier = Modifier
+                                                .padding(vertical = 8.dp)
+                                                .fillMaxWidth()
                                         ) {
                                             Box(
                                                 modifier = Modifier
@@ -438,7 +439,7 @@ fun MusicianCard(
                                         }
                                     }
 
-                                }else{
+                                } else {
                                     Text(
                                         text = buildAnnotatedString {
                                             // Utilizamos withLink y LinkAnnotation.Url
@@ -488,11 +489,19 @@ fun MusicianCard(
 
                             // CASO B: El chat existe pero está en "PENDIENTE"
                             chatState?.status?.name == "PENDIENTE" ->
-                                Triple("Pendiente...", Color.Gray, false) // Botón gris y desactivado
+                                Triple(
+                                    "Pendiente...",
+                                    Color.Gray,
+                                    false
+                                ) // Botón gris y desactivado
 
                             // CASO C: El chat ya ha sido aceptado
                             chatState?.status?.name == "ACEPTADA" ->
-                                Triple("Enviar Mensaje", BrightTealBlue, true) // Botón azul y activo
+                                Triple(
+                                    "Enviar Mensaje",
+                                    BrightTealBlue,
+                                    true
+                                ) // Botón azul y activo
 
                             // Por defecto (por seguridad)
                             else -> Triple("+ Conectar", DarkOrange, true)

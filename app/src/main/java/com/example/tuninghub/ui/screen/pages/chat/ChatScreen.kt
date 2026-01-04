@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -42,6 +43,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -68,8 +70,13 @@ import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -85,6 +92,7 @@ import com.example.tuninghub.ui.screen.pages.calendar.CalendarViewModel
 import com.example.tuninghub.ui.screen.pages.homepage.MusicianCard
 import com.example.tuninghub.ui.screen.pages.homepage.MusicianItem
 import com.example.tuninghub.ui.screen.pages.profile.ProfileViewModel
+import com.example.tuninghub.ui.theme.BloodRed
 import com.example.tuninghub.ui.theme.BrightTealBlue
 import com.example.tuninghub.ui.theme.DarkOrange
 import com.example.tuninghub.ui.theme.LightOrange
@@ -194,7 +202,7 @@ fun ChatScreen(modifier: Modifier, navController: NavController, chatViewModel: 
 
             ) {
                 ChatBox(
-                    chatViewModel,calendarViewModel,
+                    chatViewModel, calendarViewModel,
                     onSendListener = { println("Mensaje enviado: $it") }
                 )
             }
@@ -281,7 +289,11 @@ fun MessageBubble(
 
 
 @Composable
-fun ChatBox(chViewModel: ChatViewModel, cViewModel: CalendarViewModel, onSendListener: (String) -> Unit) {
+fun ChatBox(
+    chViewModel: ChatViewModel,
+    cViewModel: CalendarViewModel,
+    onSendListener: (String) -> Unit,
+) {
     var chatText by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
     Row(
@@ -297,15 +309,17 @@ fun ChatBox(chViewModel: ChatViewModel, cViewModel: CalendarViewModel, onSendLis
         ) { Icon(Icons.Default.Add, contentDescription = "Botón menú") }
         if (showDialog) {
             val myUserId = chViewModel.getMyChatUserId()
-            val otherUserId = chViewModel.otherUser.value?.uid?:""
+            val otherUserId = chViewModel.otherUser.value?.uid ?: ""
             val context = LocalContext.current
             CreateTaskDialog(
-                participantes = listOf(myUserId
-                        !!,otherUserId),
-                onDismiss = {showDialog = false},
-                onConfirm = {task->
-                    showDialog=false
-                    cViewModel.sincronizarConCalendarioExterno(context,task)
+                participantes = listOf(
+                    myUserId
+                    !!, otherUserId
+                ),
+                onDismiss = { showDialog = false },
+                onConfirm = { task ->
+                    showDialog = false
+                    cViewModel.sincronizarConCalendarioExterno(context, task)
                     cViewModel.saveTask(task)
 
                 }
@@ -353,17 +367,17 @@ fun CreateTaskDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         text = {
-
-            Column(verticalArrangement = Arrangement.Center) {
+            Column(modifier = Modifier.padding(1.dp),verticalArrangement = Arrangement.Center) {
                 Box(
-                    modifier=Modifier.padding(2.dp).align(Alignment.End)
-                ){
+                    modifier = Modifier
+                        .align(Alignment.End)
+                ) {
                     IconButton(
-                        onClick = {onDismiss()},
+                        onClick = { onDismiss() },
                         colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = Red
+                            containerColor = BloodRed
                         )
-                    ){
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Cerrar",
@@ -371,7 +385,7 @@ fun CreateTaskDialog(
                         )
                     }
                 }
-                Box(){
+                Box() {
                     Text("CREAR TAREA", fontSize = 40.sp)
                 }
 
@@ -391,20 +405,49 @@ fun CreateTaskDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Box(modifier=Modifier.weight(1f)){
-                        TextButton(onClick = {
-                            initialDatePicked = true
-                            showDatePicker = true
-                        }) {
-                            Text("Inicio: ${format.formatDate(fecInicio)}")
+                    Box(modifier = Modifier.weight(1f)) {
+                        TextButton(
+                            onClick = {
+                                initialDatePicked = true
+                                showDatePicker = true
+                            }, colors = ButtonDefaults.textButtonColors(
+                                contentColor = BrightTealBlue
+                            )
+                        ) {
+                            Text(
+
+                                text = buildAnnotatedString {
+                                    // Parte en Negrita
+                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                        append("INICIO\n")
+                                    }
+                                    // Parte Normal (la fecha)
+                                    append(format.formatDate(fecInicio))
+                                }, maxLines = 2, textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.bodySmall
+                            )
                         }
                     }
-                    Box(modifier=Modifier.weight(1f)){
-                        TextButton(onClick = {
-                            initialDatePicked = true
-                            showDatePicker = true
-                        }) {
-                            Text("Fin: ${format.formatDate(fecFin)}")
+                    Box(modifier = Modifier.weight(1f)) {
+                        TextButton(
+                            onClick = {
+                                initialDatePicked = false
+                                showDatePicker = true
+                            }, colors = ButtonDefaults.textButtonColors(
+                                contentColor = BrightTealBlue
+                            )
+                        ) {
+                            Text(
+                                text = buildAnnotatedString {
+                                    // Parte en Negrita
+                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                        append("FIN\n")
+                                    }
+                                    // Parte Normal (la fecha)
+                                    append(format.formatDate(fecFin))
+                                }, maxLines = 2, textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.bodySmall
+                            )
                         }
                     }
 
@@ -413,11 +456,13 @@ fun CreateTaskDialog(
         },
         confirmButton = {
             Button(
+                modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     val task = TaskDto("", titulo, descripcion, fecInicio, fecFin, participantes)
                     onConfirm(task)
-                }) {
-                Text ("Confirmar")
+                },
+                colors = ButtonDefaults.buttonColors(BrightTealBlue)) {
+                Text("Confirmar", textAlign = TextAlign.Center)
             }
         }
     )

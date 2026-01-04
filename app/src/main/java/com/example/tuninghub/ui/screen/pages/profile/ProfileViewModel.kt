@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.data.repository.UserRepository
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -19,10 +18,10 @@ class ProfileViewModel() : ViewModel() {
 
     val uid = repository.getCurrentUserId()
 
+    //Carga el User una vez (persiste el ciclo de vida de la app)
     init {
         getCurrentUser()
     }
-
 
     //Recuperar datos del usuario loggeado
     fun getCurrentUser() {

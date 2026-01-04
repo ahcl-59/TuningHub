@@ -223,7 +223,7 @@ fun EditarPerfilScreen(
                 ) {
                     Text("Eliminar cuenta")
                 }
-                Spacer(Modifier.height(5.dp))
+                Spacer(Modifier.height(8.dp))
                 //condicional para sacar la alerta
                 if (alertaDelete) {
                     AlertDialog(

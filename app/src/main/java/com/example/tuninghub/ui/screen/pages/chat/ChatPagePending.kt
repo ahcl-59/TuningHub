@@ -3,6 +3,7 @@
 package com.example.tuninghub.ui.screen.pages.chat
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -44,6 +46,8 @@ import com.example.tuninghub.R
 import com.example.tuninghub.data.model.ChatDto
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.ui.theme.BrightTealBlue
+import com.example.tuninghub.ui.theme.LightOrange
+import com.example.tuninghub.ui.theme.SnowWhite
 import com.example.tuninghub.ui.theme.SurfTurquoise
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -57,7 +61,7 @@ fun ChatPagePending(modifier: Modifier = Modifier, navController: NavController)
 
     Column(
         modifier = modifier
-            .fillMaxSize(),
+            .fillMaxSize().background(SnowWhite),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         when{
@@ -117,8 +121,11 @@ fun PendingChatItem(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .border(BorderStroke(1.dp, BrightTealBlue))
-            .padding(8.dp)
+            .padding(4.dp)
+            .border(
+                border = BorderStroke(1.dp, LightOrange),
+                shape = RoundedCornerShape(8.dp)
+            )
             .fillMaxWidth()
     ) {
         AsyncImage(
@@ -126,9 +133,10 @@ fun PendingChatItem(
             placeholder = painterResource(id = R.drawable.avatar_default), // Mientras carga
             error = painterResource(id = R.drawable.avatar_default), // Si falla
             contentScale = ContentScale.Crop, // Usar Crop para llenar el círculo
-            modifier = Modifier
+            modifier = Modifier.padding(2.dp)
                 .size(60.dp)
                 .clip(CircleShape)
+                .background(SnowWhite)
                 .border(border = BorderStroke(1.dp, Color.Black), shape = CircleShape),
             contentDescription = "Imagen del músico ${musician?.nombre}",
         )
@@ -159,7 +167,7 @@ fun PendingChatItem(
         ) {
             //Botón ACEPTAR
             Button(
-                modifier = Modifier.height(32.dp).width(130.dp),
+                modifier = Modifier.height(32.dp).width(125.dp),
                 onClick = {
                     chat.chId?.let{chatId->
                         cpViewModel.aceptarChat(chatId)
@@ -172,7 +180,7 @@ fun PendingChatItem(
             Spacer(modifier = Modifier.height(2.dp))
             //Botón RECHAZAR
             Button(
-                modifier = Modifier.height(32.dp).width(130.dp),
+                modifier = Modifier.height(32.dp).width(125.dp),
                 onClick = {
                     chat.chId?.let{chatId->
                         cpViewModel.rechazarChat(chatId)

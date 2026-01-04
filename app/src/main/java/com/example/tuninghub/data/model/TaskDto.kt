@@ -1,7 +1,7 @@
 package com.example.tuninghub.data.model
 
 data class TaskDto (
-    val tId:String?=null,
+    val tid:String?=null,
     val titulo:String?=null,
     val descripcion:String?=null,
     val fecInicio: Long?=0L,

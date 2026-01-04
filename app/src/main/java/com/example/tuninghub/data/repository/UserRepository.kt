@@ -58,7 +58,8 @@ class UserRepository {
                 "instrumento" to instrumento,
                 "situacionLaboral" to situacion,
                 "ciudad" to ciudad,
-                "bio" to bio
+                "bio" to bio,
+                "enlace" to enlace
             )
             if (urlImagen != null) {
                 updates["fotoPerfil"] = urlImagen

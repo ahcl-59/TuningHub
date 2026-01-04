@@ -4,6 +4,7 @@ package com.example.tuninghub.ui.screen.pages.chat
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -44,6 +46,11 @@ import com.example.tuninghub.R
 import com.example.tuninghub.data.model.ChatDto
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.ui.theme.BrightTealBlue
+import com.example.tuninghub.ui.theme.DarkOrange
+import com.example.tuninghub.ui.theme.DustGrey
+import com.example.tuninghub.ui.theme.LightOrange
+import com.example.tuninghub.ui.theme.SnowWhite
+import com.example.tuninghub.ui.theme.SurfTurquoise
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -56,7 +63,7 @@ fun ChatPageAccepted(modifier: Modifier = Modifier, navController: NavController
 
     Column(
         modifier = modifier
-            .fillMaxSize(),
+            .fillMaxSize().background(SnowWhite),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         when{
@@ -116,9 +123,11 @@ fun AcceptedChatItem(
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .border(BorderStroke(1.dp, BrightTealBlue))
-            .padding(8.dp)
+        modifier = Modifier.padding(4.dp)
+            .border(
+                border = BorderStroke(1.dp, LightOrange),
+                shape = RoundedCornerShape(8.dp)
+            )
             .fillMaxWidth()
             .clickable {
                 //REVISAR
@@ -134,10 +143,11 @@ fun AcceptedChatItem(
             placeholder = painterResource(id = R.drawable.avatar_default), // Mientras carga
             error = painterResource(id = R.drawable.avatar_default), // Si falla
             contentScale = ContentScale.Crop, // Usar Crop para llenar el círculo
-            modifier = Modifier
+            modifier = Modifier.padding(2.dp)
                 .size(60.dp)
                 .clip(CircleShape)
-                .border(border = BorderStroke(1.dp, Color.Black), shape = CircleShape),
+                .background(SnowWhite)
+                .border(border = BorderStroke(1.dp, DustGrey), shape = CircleShape),
             contentDescription = "Imagen del músico ${musician?.nombre}",
         )
         Spacer(modifier = Modifier.height(4.dp))

@@ -176,6 +176,7 @@ fun CuerpoProfile(u: UserDto) {
                 modifier = Modifier
                     .size(140.dp)
                     .clip(CircleShape)
+                    .background(SnowWhite)
                     .border(border = BorderStroke(2.dp, Color.Black), CircleShape)
             )
             Column(

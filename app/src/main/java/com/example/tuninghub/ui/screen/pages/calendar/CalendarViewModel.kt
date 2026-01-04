@@ -2,7 +2,9 @@ package com.example.tuninghub.ui.screen.pages.calendar
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.provider.CalendarContract
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tuninghub.data.model.TaskDto
@@ -22,6 +24,9 @@ class CalendarViewModel : ViewModel() {
 
     private val _tasks = MutableStateFlow<List<TaskDto>>(emptyList())
     val tasks: StateFlow<List<TaskDto>> = _tasks
+
+    private val _oneTask = MutableStateFlow<TaskDto?>(null)
+    val oneTask = _oneTask
 
 
     init {
@@ -60,6 +65,55 @@ class CalendarViewModel : ViewModel() {
                     _tasks.value = taskUpdatedList
                 }
         }
+    }
+
+    fun getOneTask(taskId: String) {
+        viewModelScope.launch {
+            val task = cRepository.getTask(taskId)
+            _oneTask.value = task
+        }
+    }
+
+    fun clearOneTask() {
+        _oneTask.value = null
+    }
+
+    fun updateTask(
+        task: TaskDto?,
+        onResult: (Boolean, String?) -> Unit,
+    ) {
+        cRepository.updateTarea(
+            task!!,
+            onResult = { isSuccess, errorMessage ->
+                if (isSuccess) {
+                    // 1. Si la actualización fue exitosa, volvemos a cargar los datos
+                    getOneTask(task.tid!!)
+                    Log.d("CalendarVM", "Tarea actualizada correctamente.")
+                } else {
+                    // 2. Si falló, registramos el error (o lo exponemos a la UI)
+                    Log.e("CalendarVM", "Error al actualizar tarea: $errorMessage")
+                }
+                //Devolvemos a la UI la llamada
+                onResult(isSuccess, errorMessage)
+            }
+        )
+    }
+
+    fun deleteTask(taskId: String, onResult: (Boolean, String?) -> Unit) {
+        if (taskId == null) {
+            onResult(false, "ID de tarea nulo")
+            return
+        }
+        cRepository.deleteTask(taskId){ isSuccess, errorMessage ->
+            if (isSuccess) {
+                Log.d("CalendarVM", "Tarea eliminada correctamente.")
+            } else {
+                Log.e("CalendarVM", "Error al eliminar tarea: $errorMessage")
+            }
+            //Devolvemos a la UI la llamada
+            onResult(isSuccess, errorMessage)
+        }
+
     }
 
     fun getMyUserId(): String? {
