@@ -3,15 +3,11 @@ package com.example.tuninghub.ui.screen.pages.chat
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -28,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.tuninghub.ui.theme.DarkOrange
@@ -39,7 +34,7 @@ import com.example.tuninghub.ui.theme.SnowWhite
 fun ChatPage(modifier: Modifier, navController: NavController) {
     //variable final con la lista de iconos del bottomNavigationBar
     val navItemList = listOf(
-        NavItem("Aceptados", Icons.Default.CheckCircle),
+        NavItem("Aceptadas", Icons.Default.CheckCircle),
         NavItem("Pendientes", Icons.Default.Warning),
     )
     var selectedIndex by remember {
@@ -51,14 +46,13 @@ fun ChatPage(modifier: Modifier, navController: NavController) {
             colors = TopAppBarDefaults.topAppBarColors(DarkOrange),
             title = {
                 Text(
-                    "CHAT",
+                    "CONEXIONES",
                     color = SnowWhite,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.SansSerif
                 )
-            },
-            actions = {}
+            }
         )
         TopNavigationBar(
             navItemList = navItemList,
@@ -74,7 +68,6 @@ fun ChatPage(modifier: Modifier, navController: NavController) {
         )
     }
 }
-
 
 //Composable con la ui de la barra inferior de navegación
 @Composable

@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -24,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -63,7 +65,9 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontFamily.Companion.Monospace
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
@@ -91,32 +95,84 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController) {
     val viewModel: HomePageViewModel = viewModel()
     val musicians = viewModel.musicians.collectAsState()
 
+    //Para la barra de búsqueda
+    var isSearching by remember { mutableStateOf(false) }
+    var busqueda by remember { mutableStateOf("") }
+    //Lista filtrada
+    val filteredList = musicians.value.filter { musician ->
+        musician.nombre?.contains(busqueda, ignoreCase = true) == true ||
+                musician.instrumento?.contains(busqueda, ignoreCase = true) == true ||
+                musician.ciudad?.contains(busqueda, ignoreCase = true) == true
+    }
+
     Column(modifier = modifier) {
         //Usaremos el TopAppBar directamente.
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(BrightTealBlue),
-            title = {
-                Text(
-                    "PRINCIPAL",
-                    color = SnowWhite,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.SansSerif
+            navigationIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.logo_tuninghub),
+                    modifier = Modifier
+                        .padding(start = 2.dp)
+                        .size(60.dp)
+                        .background(Color.Transparent),
+                    contentDescription = "Logo acompañando el título",
+                    tint = Color.Unspecified
                 )
             },
-            actions = {}
-        )
-        // El LazyColumn ocupa el resto del espacio disponible.
-        // Ahora, el 'modifier' que se pasa a HomePage ya tiene el PaddingValues
-        // aplicado desde HomeScreen (modifier.padding(it)).
+            title = {
+                if (isSearching) {
+                    TextField(
+                        value = busqueda,
+                        onValueChange = { busqueda = it },
+                        placeholder = { Text("Buscar...", color = SnowWhite.copy(alpha = 0.5f)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            unfocusedIndicatorColor = SnowWhite, // Línea de abajo fija
+                            focusedIndicatorColor = SnowWhite, // Línea de abajo de edición
+                            focusedTextColor = SnowWhite,
+                            cursorColor = SnowWhite
+                        )
+                    )
+                } else {
 
+                    Text(
+                        "TuningHub",
+                        color = Color.White,
+                        fontFamily = FontFamily.SansSerif,
+                        fontWeight = FontWeight.Bold
+                    )
+
+
+                }
+            },
+            actions = {
+                IconButton(onClick = {
+                    isSearching = !isSearching
+                    if (!isSearching) busqueda = "" // Limpia al cerrar
+                }) {
+                    Icon(
+                        imageVector = if (isSearching) Icons.Default.Close else Icons.Default.Search,
+                        contentDescription = null,
+                        tint = Color.White
+                    )
+                }
+            }
+        )
+
+        // El LazyColumn ocupa el resto del espacio disponible
         if (musicians.value.isNotEmpty()) {
             LazyColumn(
                 // El modifier.fillMaxSize() no es necesario aquí, ya que Column se encargará.
                 // Usamos .weight(1f) para que el LazyColumn ocupe todo el espacio restante.
-                modifier = Modifier.weight(1f).background(SnowWhite)
+                modifier = Modifier
+                    .weight(1f)
+                    .background(SnowWhite)
             ) {
-                items(musicians.value) {
+                items(filteredList) {
                     MusicianItem(it, viewModel, navController)
                 }
             }
@@ -140,52 +196,81 @@ fun MusicianItem(
     navController: NavController,
 ) {
     var showDialog by remember { mutableStateOf(false) }
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .padding(4.dp).clip(RoundedCornerShape(8.dp)).background(LightOrange)
-            .border(
-                border = BorderStroke(1.dp, SurfTurquoise),
-                shape = RoundedCornerShape(8.dp)
+    Box(modifier = Modifier.fillMaxWidth()) {//usamos un Box para la alineación
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(4.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .border(
+                    border = BorderStroke(1.dp, SurfTurquoise),
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .clickable {
+                    //muestra el perfil
+                    hpViewModel.getOneMusician(musician.mid!!)
+                    showDialog = true
+                }) {
+            AsyncImage(
+                model = musician.imagen, // La URL (String)
+                placeholder = painterResource(id = R.drawable.avatar_default), // Mientras carga
+                error = painterResource(id = R.drawable.avatar_default), // Si falla
+                contentScale = ContentScale.Crop, // Usar Crop para llenar el círculo
+                modifier = Modifier
+                    .padding(start = 6.dp)
+                    .size(60.dp)
+                    .clip(CircleShape)
+                    .background(SnowWhite)
+                    .border(border = BorderStroke(1.dp, DustGrey), shape = CircleShape),
+                contentDescription = "Imagen del músico ${musician.nombre}",
             )
-            .fillMaxWidth()
-            .clickable {
-                //muestra el perfil
-                hpViewModel.getOneMusician(musician.mid!!)
-                showDialog = true
-            }) {
-        AsyncImage(
-            model = musician.imagen, // La URL (String)
-            placeholder = painterResource(id = R.drawable.avatar_default), // Mientras carga
-            error = painterResource(id = R.drawable.avatar_default), // Si falla
-            contentScale = ContentScale.Crop, // Usar Crop para llenar el círculo
-            modifier = Modifier.padding(start=6.dp)
-                .size(60.dp)
-                .clip(CircleShape)
-                .background(SnowWhite)
-                .border(border = BorderStroke(1.dp, DustGrey), shape = CircleShape),
-            contentDescription = "Imagen del músico ${musician.nombre}",
-        )
-        Spacer(modifier = Modifier.height(30.dp))
-        //Caja con datos
-        Column (modifier = Modifier.padding(15.dp).weight(1f)) {
+            Spacer(modifier = Modifier.height(30.dp))
+            //Caja con datos
+            Column(
+                modifier = Modifier
+                    .padding(15.dp)
+                    .weight(1f)
+            ) {
+                Text(
+                    text = "${musician.nombre.orEmpty()} ${musician.apellido.orEmpty()}",
+                    color = DustGrey,
+                    fontFamily = FontFamily.SansSerif,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = "${musician.instrumento.orEmpty()} - ${musician.ciudad.orEmpty()}",
+                    color = BrightTealBlue,
+                    fontFamily = FontFamily.SansSerif,
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
+            Spacer(modifier = Modifier.height(2.dp))
+        }
+        //Cartela para mostrar si es conexión o no
+        Surface(
+            modifier = Modifier
+                .padding(4.dp)
+                .align(Alignment.BottomEnd),
+            color = if (musician.isMatched == true) BrightTealBlue.copy(alpha = 0.2f) else Color.Transparent,
+            shape = RoundedCornerShape(
+                topStart = 8.dp,
+                topEnd = 0.dp,
+                bottomEnd = 8.dp,
+                bottomStart = 0.dp
+            )
+        ) {
             Text(
-                text = "${musician.nombre.orEmpty()} ${musician.apellido.orEmpty()}",
-                color = DustGrey,
-                fontFamily = FontFamily.SansSerif,
-                fontSize = 20.sp,
+                text = if (musician.isMatched == true) "AGREGADO" else "",
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = "${musician.instrumento.orEmpty()} - ${musician.ciudad.orEmpty()}",
-                color = BrightTealBlue,
-                fontFamily = FontFamily.SansSerif,
-                fontSize = 20.sp,
-                textAlign = TextAlign.Center
+                color = if (musician.isMatched == true) BrightTealBlue else Color.Transparent
             )
         }
-        Spacer(modifier = Modifier.height(2.dp))
+
     }
     //Si el MusicianItem existe, puedo hacer click y ver su perfil
     if (showDialog) {
@@ -269,12 +354,13 @@ fun MusicianCard(
                                 maxLines = 2
                             )
                             Spacer(modifier = Modifier.height(10.dp))
-                            val imagePainter = if (selectedMusician?.fotoPerfil.isNullOrEmpty()) {
-                                painterResource(id = R.drawable.avatar_default)
-                            } else {
-                                // De lo contrario, carga la imagen de forma asíncrona desde la URL
-                                rememberAsyncImagePainter(selectedMusician?.fotoPerfil)
-                            }
+                            val imagePainter =
+                                if (selectedMusician?.fotoPerfil.isNullOrEmpty()) {
+                                    painterResource(id = R.drawable.avatar_default)
+                                } else {
+                                    // De lo contrario, carga la imagen de forma asíncrona desde la URL
+                                    rememberAsyncImagePainter(selectedMusician?.fotoPerfil)
+                                }
                             Image(
                                 painter = imagePainter,
                                 contentDescription = "Foto de perfil",
@@ -283,7 +369,10 @@ fun MusicianCard(
                                     .size(140.dp)
                                     .clip(CircleShape)
                                     .background(SnowWhite)
-                                    .border(border = BorderStroke(2.dp, Color.Black), CircleShape)
+                                    .border(
+                                        border = BorderStroke(2.dp, Color.Black),
+                                        CircleShape
+                                    )
                             )
                             Spacer(modifier = Modifier.height(10.dp))
 
@@ -404,7 +493,11 @@ fun MusicianCard(
                                                     .fillMaxWidth(0.9f)
                                                     .aspectRatio(16f / 9f)
                                                     .clip(RoundedCornerShape(12.dp))
-                                                    .clickable { uriHandler.openUri(selectedMusician?.enlace!!) },
+                                                    .clickable {
+                                                        uriHandler.openUri(
+                                                            selectedMusician?.enlace!!
+                                                        )
+                                                    },
                                                 contentAlignment = Alignment.Center
                                             ) {
                                                 // Imagen de la miniatura (Calidad estándar: hqdefault o 0.jpg)

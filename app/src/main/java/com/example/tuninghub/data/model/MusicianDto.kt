@@ -6,5 +6,6 @@ data class MusicianDto(
     val nombre: String? = null,
     val apellido: String? = null,
     val instrumento: String? = null,
-    val ciudad: String? =null
+    val ciudad: String? =null,
+    val isMatched:Boolean?=false
 )

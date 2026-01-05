@@ -2,7 +2,6 @@ package com.example.tuninghub.ui.screen.signup
 
 import android.net.Uri
 import android.util.Log
-import android.widget.Spinner
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,19 +10,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.DividerDefaults
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
@@ -44,7 +39,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -54,17 +48,28 @@ import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.ui.screen.auth.AuthViewModel
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.MenuItemColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import coil.compose.rememberAsyncImagePainter
+import com.example.tuninghub.ui.theme.BrightTealBlue
+import com.example.tuninghub.ui.theme.DarkOrange
+import com.example.tuninghub.ui.theme.DustGrey
+import com.example.tuninghub.ui.theme.LightOrange
+import com.example.tuninghub.ui.theme.SnowWhite
 
 
 @Composable
@@ -93,32 +98,34 @@ fun SignUpScreen(
     val focusManager = LocalFocusManager.current
     Column(
         modifier = modifier
+            .background(SnowWhite)
             .fillMaxSize()
             .padding(top = 40.dp, bottom = 50.dp, start = 40.dp, end = 40.dp)
-            .verticalScroll(scrollState),
+            .verticalScroll(scrollState)
+            .imePadding(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Hello there!",
+            text = "Hola compi de atril!",
             modifier = Modifier.fillMaxWidth(),
             style = TextStyle(
                 fontSize = 30.sp,
-                fontFamily = FontFamily.Monospace,
+                fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.SemiBold,
             )
         )
-
         Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = "Crea una cuenta",
             modifier = Modifier.fillMaxWidth(),
             style = TextStyle(
                 fontSize = 22.sp,
+                fontFamily = FontFamily.SansSerif
             )
         )
         Spacer(modifier = Modifier.height(10.dp))
-
+        //Inserción de imagen
         InsertarImagen(fotoURL, onImageSelected = { fotoURL = it })
         //Email
         OutlinedTextField(
@@ -130,7 +137,14 @@ fun SignUpScreen(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions (onNext ={ focusManager.moveFocus(FocusDirection.Down)}),
-            singleLine = true
+            singleLine = true,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                unfocusedIndicatorColor = BrightTealBlue,
+                focusedIndicatorColor = BrightTealBlue,
+                cursorColor = BrightTealBlue
+            )
         )
         Spacer(modifier = Modifier.height(5.dp))
         //Password
@@ -144,7 +158,14 @@ fun SignUpScreen(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions (onNext ={ focusManager.moveFocus(FocusDirection.Down)}),
-            singleLine = true
+            singleLine = true,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                unfocusedIndicatorColor = BrightTealBlue,
+                focusedIndicatorColor = BrightTealBlue,
+                cursorColor = BrightTealBlue
+            )
 
         )
         Spacer(modifier = Modifier.height(5.dp))
@@ -161,7 +182,7 @@ fun SignUpScreen(
         CuadroTexto(bio, { bio = it }, "Biografía")
         Spacer(modifier = Modifier.height(5.dp))
         CuadroTexto(enlace, { enlace = it }, "Enlace de actividad artística (preferible Youtube)")
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         //Botón
         Button(
             onClick = {
@@ -199,8 +220,9 @@ fun SignUpScreen(
                 .height(60.dp),
             enabled = email.isNotBlank() && pw.isNotBlank() && !isLoading
         ) {
-            Text(text = "Signup", fontSize = 22.sp)
+            Text(text = "Signup", fontSize = 22.sp,fontFamily = FontFamily.SansSerif)
         }
+        Spacer(modifier = Modifier.height(10.dp))
     }
 }
 
@@ -227,8 +249,8 @@ private fun SeleccionarSituacion(
             label = { Text("Situación laboral") },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = ExposedDropdownMenuDefaults.textFieldColors(
-                unfocusedContainerColor = Color(0xFFFFFDFD),
-                focusedContainerColor = Color(0xFFBBBBBB),
+                unfocusedContainerColor = SnowWhite,
+                focusedContainerColor = BrightTealBlue.copy(alpha = 0.2f),
             ),
         )
         ExposedDropdownMenu(
@@ -272,6 +294,7 @@ private fun InsertarImagen(
         modifier = Modifier
             .size(120.dp)
             .clip(CircleShape)
+            .border(border = BorderStroke(1.dp, DarkOrange),shape=CircleShape)
             .clickable { launcher.launch("image/*") }, // dispara el selector
         contentScale = ContentScale.Crop
     )
@@ -289,6 +312,13 @@ private fun CuadroTexto(
         onValueChange = onValueChange,
         label = { Text(text = texto) },
         modifier = Modifier.fillMaxWidth(),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            unfocusedIndicatorColor = BrightTealBlue,
+            focusedIndicatorColor = BrightTealBlue,
+            cursorColor = BrightTealBlue
+        ),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next),
@@ -327,11 +357,12 @@ private fun InstrumentList(
             label = { Text("Instrumento") },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = ExposedDropdownMenuDefaults.textFieldColors(
-                unfocusedContainerColor = Color(0xFFFFFDFD),
-                focusedContainerColor = Color(0xFFBBBBBB),
+                unfocusedContainerColor = SnowWhite,
+                focusedContainerColor = BrightTealBlue.copy(alpha = 0.2f),
             ),
         )
         ExposedDropdownMenu(
+            modifier=Modifier.background(SnowWhite),
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
@@ -342,7 +373,7 @@ private fun InstrumentList(
                         onInstrumentSelected(option)
                         expanded = false
                     },
-                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                 )
                 HorizontalDivider(thickness = 2.dp)
             }

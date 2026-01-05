@@ -45,6 +45,7 @@ import coil.compose.AsyncImage
 import com.example.tuninghub.R
 import com.example.tuninghub.data.model.ChatDto
 import com.example.tuninghub.data.model.UserDto
+import com.example.tuninghub.ui.theme.BloodRed
 import com.example.tuninghub.ui.theme.BrightTealBlue
 import com.example.tuninghub.ui.theme.LightOrange
 import com.example.tuninghub.ui.theme.SnowWhite
@@ -121,7 +122,7 @@ fun PendingChatItem(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .padding(4.dp)
+            .padding(4.dp).height(80.dp)
             .border(
                 border = BorderStroke(1.dp, LightOrange),
                 shape = RoundedCornerShape(8.dp)
@@ -167,7 +168,7 @@ fun PendingChatItem(
         ) {
             //Botón ACEPTAR
             Button(
-                modifier = Modifier.height(32.dp).width(125.dp),
+                modifier = Modifier.height(40.dp).width(125.dp).padding(2.dp),
                 onClick = {
                     chat.chId?.let{chatId->
                         cpViewModel.aceptarChat(chatId)
@@ -177,16 +178,16 @@ fun PendingChatItem(
             ) {
                 Text("ACEPTAR")
             }
-            Spacer(modifier = Modifier.height(2.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             //Botón RECHAZAR
             Button(
-                modifier = Modifier.height(32.dp).width(125.dp),
+                modifier = Modifier.height(40.dp).width(125.dp).padding(2.dp),
                 onClick = {
                     chat.chId?.let{chatId->
                         cpViewModel.rechazarChat(chatId)
                     }
                 },
-                colors = ButtonDefaults.buttonColors(Color.Red)
+                colors = ButtonDefaults.buttonColors(BloodRed)
             ) {
                 Text("RECHAZAR")
             }

@@ -1,10 +1,8 @@
 package com.example.tuninghub.ui.screen.login
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -12,22 +10,16 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -36,8 +28,8 @@ import androidx.navigation.NavController
 import com.example.tuninghub.util.AppUtil
 import com.example.tuninghub.R
 import com.example.tuninghub.ui.screen.auth.AuthViewModel
+import com.example.tuninghub.ui.theme.BrightTealBlue
 import com.example.tuninghub.ui.theme.SurfTurquoise
-
 
 @Composable
 fun LoginScreen(
@@ -74,24 +66,16 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Welcome back!",
+                text = "Bienvenido/a de vuelta!",
                 modifier = Modifier.fillMaxWidth(),
                 style = TextStyle(
-                    fontSize = 30.sp,
-                    fontFamily = FontFamily.Monospace,
+                    fontSize = 35.sp,
+                    fontFamily = FontFamily.SansSerif,
                     fontWeight = FontWeight.SemiBold,
-                )
+                ),
+                color = BrightTealBlue
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(
-                text = "Sign in to your account",
-                modifier = Modifier.fillMaxWidth(),
-                style = TextStyle(
-                    fontSize = 22.sp,
-                )
-            )
             Spacer(modifier = Modifier.height(20.dp))
 
             Image(
@@ -113,7 +97,14 @@ fun LoginScreen(
                 label = {
                     Text(text = "Email address")
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    unfocusedIndicatorColor = BrightTealBlue,
+                    focusedIndicatorColor = BrightTealBlue,
+                    cursorColor = BrightTealBlue
+                )
             )
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
@@ -126,7 +117,14 @@ fun LoginScreen(
                 },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    unfocusedIndicatorColor = BrightTealBlue,
+                    focusedIndicatorColor = BrightTealBlue,
+                    cursorColor = BrightTealBlue
+                )
             )
 
             Spacer(modifier = Modifier.height(30.dp))
@@ -155,8 +153,7 @@ fun LoginScreen(
                 Text(text = "Login", fontSize = 22.sp)
                 //Text (text = if(isLoading) "Logging in" else "Login", fontSize = 22.sp)
             }
-
+            Spacer(modifier = Modifier.height(10.dp))
         }
-
     }
 }

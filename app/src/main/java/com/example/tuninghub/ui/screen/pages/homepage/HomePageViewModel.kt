@@ -48,12 +48,15 @@ class HomePageViewModel: ViewModel(){
     }
 
     //REVISAR
-    fun mapUserDtoToMusicianDto(
+    suspend fun mapUserDtoToMusicianDto(
         user: UserDto,
         //interests: List<ConnectionDto> // Lista de intereses enviados o recibidos
     ): MusicianDto {
         // 1 -> Determinar el estado de la conexión
-        //val status = determineConnectionStatus(user.uid!!,interests)
+        val myId = repository.getCurrentUserId()
+        val chatId = user.uid?.let { ChatIdGenerator().generateChatId(myId!!,it) }
+
+        val chatItem:ChatDto? = chRepository.getCurrentChat(chatId!!)
 
         // 2 -> Mapea y devuelve el modelo de presentación (sólo con los datos necesarios)
         return MusicianDto(
@@ -62,8 +65,8 @@ class HomePageViewModel: ViewModel(){
             apellido = user.apellido,
             imagen = user.fotoPerfil,
             instrumento = user.instrumento,
-            ciudad = user.ciudad
-
+            ciudad = user.ciudad,
+            isMatched = chatItem?.status?.name == "ACEPTADA"//sólo lo devolverá si es Aceptada
         )
     }
 

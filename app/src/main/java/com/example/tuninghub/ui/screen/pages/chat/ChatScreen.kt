@@ -38,6 +38,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -49,7 +50,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
@@ -95,6 +98,7 @@ import com.example.tuninghub.ui.screen.pages.profile.ProfileViewModel
 import com.example.tuninghub.ui.theme.BloodRed
 import com.example.tuninghub.ui.theme.BrightTealBlue
 import com.example.tuninghub.ui.theme.DarkOrange
+import com.example.tuninghub.ui.theme.DustGrey
 import com.example.tuninghub.ui.theme.LightOrange
 import com.example.tuninghub.ui.theme.SnowWhite
 import com.example.tuninghub.ui.theme.SurfTurquoise
@@ -367,7 +371,7 @@ fun CreateTaskDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         text = {
-            Column(modifier = Modifier.padding(1.dp),verticalArrangement = Arrangement.Center) {
+            Column(modifier = Modifier.padding(1.dp), verticalArrangement = Arrangement.Center) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.End)
@@ -385,21 +389,41 @@ fun CreateTaskDialog(
                         )
                     }
                 }
-                Box() {
-                    Text("CREAR TAREA", fontSize = 40.sp)
+                Box {
+                    Text(
+                        "CREAR TAREA",
+                        fontSize = 30.sp,
+                        fontFamily = FontFamily.SansSerif,
+                        fontWeight = FontWeight.Bold,
+                        color = DustGrey
+                    )
                 }
 
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = titulo,
                     onValueChange = { titulo = it },
-                    label = { Text("Título") },
+                    label = { Text("Título", color = BrightTealBlue) },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        unfocusedIndicatorColor = BrightTealBlue, // Línea de abajo fija
+                        focusedIndicatorColor = BrightTealBlue, // Línea de abajo de edición
+                        cursorColor = BrightTealBlue
+                    )
                 )
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = descripcion,
                     onValueChange = { descripcion = it },
-                    label = { Text("Descripción") },
+                    label = { Text("Descripción", color = BrightTealBlue) },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        unfocusedIndicatorColor = BrightTealBlue, // Línea de abajo fija
+                        focusedIndicatorColor = BrightTealBlue, // Línea de abajo de edición
+                        cursorColor = BrightTealBlue
+                    )
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -461,7 +485,8 @@ fun CreateTaskDialog(
                     val task = TaskDto("", titulo, descripcion, fecInicio, fecFin, participantes)
                     onConfirm(task)
                 },
-                colors = ButtonDefaults.buttonColors(BrightTealBlue)) {
+                colors = ButtonDefaults.buttonColors(BrightTealBlue)
+            ) {
                 Text("Confirmar", textAlign = TextAlign.Center)
             }
         }
@@ -502,11 +527,22 @@ fun CalendarDialog(
             onDismissRequest = onDismiss,
             confirmButton = {
                 TextButton(onClick = { showTimePicker = true }) {
-                    Text("Siguiente")
+                    Text("Siguiente", fontFamily = FontFamily.SansSerif, color = BrightTealBlue)
                 }
             }
         ) {
-            DatePicker(state = dateState)
+            DatePicker(
+                state = dateState,
+                colors = DatePickerDefaults.colors(
+                    containerColor = SnowWhite,
+                    titleContentColor = DustGrey,
+                    headlineContentColor = DustGrey,
+                    selectedDayContainerColor = DarkOrange, // El círculo del día elegido
+                    selectedDayContentColor = Color.White,      // El número dentro del círculo
+                    todayContentColor = DarkOrange,         // El color del número de "hoy"
+                    todayDateBorderColor = DarkOrange       // El círculo de "hoy"
+                )
+            )
         }
     } else {
         // DIÁLOGO DE HORA
@@ -522,11 +558,26 @@ fun CalendarDialog(
 
                     onDateTimeSelected(calendar.timeInMillis)
                 }) {
-                    Text("Confirmar")
+                    Text("Confirmar", fontFamily = FontFamily.SansSerif, color = BrightTealBlue)
                 }
             },
-            title = { Text("Selecciona la hora") },
-            text = { TimePicker(state = timeState) }
+            title = {
+                Text(
+                    "Selecciona la hora",
+                    fontFamily = FontFamily.SansSerif,
+                    color = DustGrey
+                )
+            },
+            text = { TimePicker(
+                state = timeState,
+                colors = TimePickerDefaults.colors(
+                    clockDialColor = Color.LightGray.copy(alpha = 0.2f), // El fondo del reloj
+                    selectorColor = DarkOrange,                     // La manecilla
+                    periodSelectorSelectedContainerColor = DustGrey, // AM/PM seleccionado
+                    periodSelectorSelectedContentColor = SnowWhite,
+                    timeSelectorSelectedContainerColor = DarkOrange,   // Cuadro de hora seleccionado
+                    timeSelectorSelectedContentColor = SnowWhite
+                )) }
         )
     }
 }

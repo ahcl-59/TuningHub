@@ -96,7 +96,7 @@ fun ProfilePage(modifier: Modifier, navController: NavController) {
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(DarkOrange),
             title = {
-                Text("PROFILE",
+                Text("PERFIL",
                     color = SnowWhite,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
@@ -263,7 +263,8 @@ fun CuerpoProfile(u: UserDto) {
                 )
             )
             TextField(
-                modifier=Modifier.border(1.dp,DarkOrange),
+                modifier=Modifier.fillMaxWidth().border(border=BorderStroke(1.dp,DarkOrange),
+                    shape = RoundedCornerShape(12.dp)),
                 value = u.bio ?: "",
                 onValueChange = {},
                 readOnly = true,

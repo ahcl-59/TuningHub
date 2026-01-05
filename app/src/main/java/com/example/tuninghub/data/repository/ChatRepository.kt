@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.tuninghub.data.model.ChatDto
 import com.example.tuninghub.data.model.ChatStatus
 import com.example.tuninghub.data.model.MessageDto
-import com.google.android.gms.common.config.GservicesValue.value
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -20,7 +19,6 @@ class ChatRepository {
 
     private val firestore = FirebaseFirestore.getInstance()
     private val timestampNow = FieldValue.serverTimestamp()
-
 
     //CREAR CHAT -> esto ocurre en las cards desde HomePageViewModel
     suspend fun crearChat(chatId: String,myId:String) {
@@ -69,7 +67,6 @@ class ChatRepository {
         val messagePath = firestore.collection("chats")
             .document(chatId).collection("messages").document()
 
-
         firestore.runTransaction { transaction ->
             val document = transaction.get(chatPath)
             val status = document.getString("status")
@@ -110,10 +107,9 @@ class ChatRepository {
                 }
             }
     }
+    //Para mejoras futuras
+    fun deleteMessage(chId: String, msgId: String) {}
 
-    fun deleteMessage(chId: String, msgId: String) {
-
-    }
     //Comprobación desde HomePageViewModel
     suspend fun getCurrentChat(chId: String): ChatDto? {
         return try {

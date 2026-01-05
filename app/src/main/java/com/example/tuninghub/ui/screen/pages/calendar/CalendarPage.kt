@@ -1,33 +1,28 @@
 package com.example.tuninghub.ui.screen.pages.calendar
 
-import android.graphics.drawable.shapes.Shape
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -50,14 +44,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,8 +56,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tuninghub.data.model.TaskDto
 import com.example.tuninghub.data.model.UserDto
-import com.example.tuninghub.ui.screen.pages.calendar.CalendarViewModel
-import com.example.tuninghub.ui.screen.pages.chat.AcceptedChatItem
 import com.example.tuninghub.ui.screen.pages.chat.CalendarDialog
 import com.example.tuninghub.ui.theme.BloodRed
 import com.example.tuninghub.ui.theme.BrightTealBlue
@@ -89,14 +78,13 @@ fun CalendarPage(modifier: Modifier = Modifier) {
             colors = TopAppBarDefaults.topAppBarColors(BrightTealBlue),
             title = {
                 Text(
-                    "CALENDAR",
+                    "EVENTOS",
                     color = SnowWhite,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.SansSerif
                 )
-            },
-            actions = {}
+            }
         )
         when {
             tasks == null -> {
@@ -173,7 +161,7 @@ fun TaskItem(
                         topStart = 8.dp,
                         topEnd = 8.dp,
                         bottomEnd = 0.dp, // Esquina recta
-                        bottomStart = 0.dp // Esquina recta
+                        bottomStart = 0.dp
                     )
                 )
                 .background(DustGrey)
@@ -188,7 +176,7 @@ fun TaskItem(
             fontWeight = FontWeight.Bold
         )
         Row(
-            verticalAlignment = Alignment.CenterVertically,
+
             modifier = Modifier
                 .padding(5.dp)
                 .fillMaxWidth()
@@ -229,12 +217,13 @@ fun TaskItem(
                     )
                 }
             }
-            //Caja con el icono de envío de mensajes
+            //Columna con las fechas de inicio y de fin
             Column(
-                modifier = Modifier
-                    .padding(10.dp)
+                modifier = Modifier.fillMaxHeight()
+                    .padding(vertical=5.dp,horizontal = 10.dp)
                     .weight(1f),
-                horizontalAlignment = Alignment.End
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start
             ) {
                 val time = DateTimeFormatter()
                 task.fecInicio?.let {
@@ -247,7 +236,7 @@ fun TaskItem(
                             //Fecha
                             append(time.formatDate(it))
                         },
-                        textAlign = TextAlign.End,
+                        textAlign = TextAlign.Start,
                         color = BrightTealBlue,
                         fontFamily = FontFamily.SansSerif,
                         fontSize = 12.sp,
@@ -265,7 +254,7 @@ fun TaskItem(
                             //Fecha
                             append(time.formatDate(it))
                         },
-                        textAlign = TextAlign.End,
+                        textAlign = TextAlign.Start,
                         color = BrightTealBlue,
                         fontFamily = FontFamily.SansSerif,
                         fontSize = 12.sp,
@@ -276,7 +265,7 @@ fun TaskItem(
             Spacer(modifier = Modifier.height(4.dp))
             //Botón para editar, eliminar
             IconButton(
-                modifier = Modifier.padding(3.dp),
+                modifier = Modifier.padding(3.dp).align(Alignment.CenterVertically),
                 onClick = {
                     //Recuperamos la tarea para actualizar el oneTask
                     task.tid?.let {
@@ -301,7 +290,6 @@ fun TaskItem(
     }
 
 }
-
 
 @Composable
 fun TaskCardEdit(
