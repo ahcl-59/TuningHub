@@ -54,7 +54,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             }
             composable("editarPerfil") {
                 val profileViewModel: ProfileViewModel = viewModel()
-                EditarPerfilScreen(modifier, navController, profileViewModel)
+                EditarPerfilScreen(navController, profileViewModel)
             }
 
             composable(
