@@ -15,7 +15,7 @@ Proyecto de fin de grado superior en **Desarrollo de Aplicaciones Multiplataform
 - Versión requerida: **Android 7(API 24)** o superior
 
 ## MANUAL DE INSTALACIÓN DE USUARIO
-1. Ir al repositorio de Google Drive:
+1. Ir al repositorio de Google Drive: [LINK](https://drive.google.com/drive/folders/1-mVVDmpP1HmQSDc-gUIR1O0BqHMSkqOY?usp=sharing)
 2. Descargar el fichero ***```app-release.apk```***
 3. Dar permisos al dispositivo -> es posible que haya que activar el permiso de "Instalar aplicaciones de fuentes desconocidas"
 4. Si sale el aviso de "App no reconocida" -> pulsar "Instalar de todas formas
@@ -23,6 +23,6 @@ Proyecto de fin de grado superior en **Desarrollo de Aplicaciones Multiplataform
 ## 📷CAPTURAS DE PANTALLA
 | INICIO | PERFIL | CHAT |
 | :---: | :---: | :---:  |
-| ![Imagen](screenshots/screenshot1.jpg) | ![Imagen](screenshots/screenshot2.jpg) | ![Imagen](screenshots/screenshot3.jpg) |
+| <src img= "screenshots/screenshot1.jpg" width="200"> | <src img= "screenshots/screenshot2.jpg" width="200"> | <src img= "screenshots/screenshot3.jpg" width="200"> |
 
 ¡A conectar! 📯🎻🎹🥁
