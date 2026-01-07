@@ -2,13 +2,13 @@
 Proyecto de fin de grado superior en Desarrollo de Aplicaciones Multiplataforma en la Universidad Alfonso X El Sabio (UAX)
 
 ## DESCRIPCIÓN
-Proyecto de herramienta online para mejorar el networking (empleo, proyectos, colaboraciones) en el sector de la música clásica sinfónica. Se describe como una red social que permite encontrar a estudiantes o profesionales del sector, animando a colaborar en proyectos.
+🎶 Proyecto de herramienta online para mejorar el networking (empleo, proyectos, colaboraciones) en el sector de la música clásica sinfónica. Se describe como una red social que permite encontrar a estudiantes o profesionales del sector, animando a colaborar en proyectos.
 
 ## TECNOLOGÍAS
-Android Studio (IDE)
-Kotlin (lenguaje de programación)
-Jetpack Compose (UI)
-Firebase: Cloud Firestore y Storage (BBDD)
+* Android Studio (IDE)
+* Kotlin (lenguaje de programación)
+* Jetpack Compose (UI)
+* Firebase: Cloud Firestore y Storage (BBDD)
 
 ## REQUISITOS
 - OS: Android
@@ -20,4 +20,7 @@ Firebase: Cloud Firestore y Storage (BBDD)
 3. Dar permisos al dispositivo -> es posible que haya que activar el permiso de "Instalar aplicaciones de fuentes desconocidas"
 4. Si sale el aviso de "App no reconocida" -> pulsar "Instalar de todas formas
 
-¡A conectar! :)
+## CAPTURAS DE PANTALLA
+![Imagen](screenshots/) ![Imagen](screenshots/) ![Imagen](screenshots/) ![Imagen](screenshots/)
+
+¡A conectar! 📯🎻🎹🥁
