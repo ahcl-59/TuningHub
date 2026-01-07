@@ -20,7 +20,9 @@ Proyecto de fin de grado superior en Desarrollo de Aplicaciones Multiplataforma 
 3. Dar permisos al dispositivo -> es posible que haya que activar el permiso de "Instalar aplicaciones de fuentes desconocidas"
 4. Si sale el aviso de "App no reconocida" -> pulsar "Instalar de todas formas
 
-## CAPTURAS DE PANTALLA
-![Imagen](screenshots/) ![Imagen](screenshots/) ![Imagen](screenshots/) ![Imagen](screenshots/)
+## 📷CAPTURAS DE PANTALLA
+| INICIO | PERFIL | CHAT |
+| :---: | :---: | :---:  |
+| ![Imagen](screenshots/screenshot1.jpg) | ![Imagen](screenshots/screenshot2.jpg) | ![Imagen](screenshots/screenshot3.jpg) |
 
 ¡A conectar! 📯🎻🎹🥁
