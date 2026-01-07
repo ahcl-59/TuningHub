@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -54,7 +53,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
@@ -65,9 +63,7 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontFamily.Companion.Monospace
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
@@ -84,7 +80,6 @@ import com.example.tuninghub.ui.theme.BloodRed
 import com.example.tuninghub.ui.theme.BrightTealBlue
 import com.example.tuninghub.ui.theme.DarkOrange
 import com.example.tuninghub.ui.theme.DustGrey
-import com.example.tuninghub.ui.theme.LightOrange
 import com.example.tuninghub.ui.theme.SnowWhite
 import com.example.tuninghub.ui.theme.SurfTurquoise
 
@@ -101,8 +96,14 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController) {
     //Lista filtrada
     val filteredList = musicians.value.filter { musician ->
         musician.nombre?.contains(busqueda, ignoreCase = true) == true ||
+                musician.apellido?.contains(busqueda, ignoreCase = true) == true ||
                 musician.instrumento?.contains(busqueda, ignoreCase = true) == true ||
                 musician.ciudad?.contains(busqueda, ignoreCase = true) == true
+    }
+
+    //Refresca cada vez que se entra
+    LaunchedEffect(Unit) {
+        viewModel.refreshMusicians()
     }
 
     Column(modifier = modifier) {
@@ -145,8 +146,6 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController) {
                         fontFamily = FontFamily.SansSerif,
                         fontWeight = FontWeight.Bold
                     )
-
-
                 }
             },
             actions = {
@@ -183,7 +182,7 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController) {
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color=DarkOrange)
             }
         }
     }
@@ -304,6 +303,7 @@ fun MusicianCard(
                 .fillMaxWidth(0.9f)
                 .fillMaxHeight(0.85f),
             shape = RoundedCornerShape(16.dp),
+            border = BorderStroke(1.dp, DarkOrange),
             elevation = CardDefaults.cardElevation(10.dp)
         ) {
             Column(
@@ -375,7 +375,6 @@ fun MusicianCard(
                                     )
                             )
                             Spacer(modifier = Modifier.height(10.dp))
-
                         }
                         //SEGUNDA SECCIÓN
                         Column {
@@ -478,7 +477,6 @@ fun MusicianCard(
 
                                         else -> null
                                     }
-
                                     if (videoId != null) {
                                         val uriHandler = LocalUriHandler.current
 
@@ -531,7 +529,6 @@ fun MusicianCard(
                                             )
                                         }
                                     }
-
                                 } else {
                                     Text(
                                         text = buildAnnotatedString {
@@ -562,7 +559,7 @@ fun MusicianCard(
                         }
                     }
                 }
-                //Barra inferior
+                //Barra inferior de cada Card
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     tonalElevation = 2.dp,
@@ -599,7 +596,6 @@ fun MusicianCard(
                             // Por defecto (por seguridad)
                             else -> Triple("+ Conectar", DarkOrange, true)
                         }
-
                         Button(
                             modifier = Modifier.fillMaxWidth(),
                             enabled = isEnabled,

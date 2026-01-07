@@ -67,7 +67,6 @@ class ProfileViewModel() : ViewModel() {
             repository.deleteUser(uid, password)
         }
     }
-
 }
 
 

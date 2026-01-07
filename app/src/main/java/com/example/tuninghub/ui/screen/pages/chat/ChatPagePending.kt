@@ -47,7 +47,7 @@ import com.example.tuninghub.data.model.ChatDto
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.ui.theme.BloodRed
 import com.example.tuninghub.ui.theme.BrightTealBlue
-import com.example.tuninghub.ui.theme.LightOrange
+import com.example.tuninghub.ui.theme.DarkOrange
 import com.example.tuninghub.ui.theme.SnowWhite
 import com.example.tuninghub.ui.theme.SurfTurquoise
 import java.text.SimpleDateFormat
@@ -118,13 +118,12 @@ fun PendingChatItem(
             cpViewModel.getOneMusician(it)
         }
     }
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .padding(4.dp).height(80.dp)
             .border(
-                border = BorderStroke(1.dp, LightOrange),
+                border = BorderStroke(1.dp, DarkOrange),
                 shape = RoundedCornerShape(8.dp)
             )
             .fillMaxWidth()
@@ -134,7 +133,7 @@ fun PendingChatItem(
             placeholder = painterResource(id = R.drawable.avatar_default), // Mientras carga
             error = painterResource(id = R.drawable.avatar_default), // Si falla
             contentScale = ContentScale.Crop, // Usar Crop para llenar el círculo
-            modifier = Modifier.padding(2.dp)
+            modifier = Modifier.padding(3.dp)
                 .size(60.dp)
                 .clip(CircleShape)
                 .background(SnowWhite)
@@ -178,7 +177,7 @@ fun PendingChatItem(
             ) {
                 Text("ACEPTAR")
             }
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(2.dp))
             //Botón RECHAZAR
             Button(
                 modifier = Modifier.height(40.dp).width(125.dp).padding(2.dp),

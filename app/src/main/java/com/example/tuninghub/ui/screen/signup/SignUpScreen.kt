@@ -56,8 +56,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
@@ -67,8 +65,6 @@ import androidx.compose.ui.text.input.ImeAction
 import coil.compose.rememberAsyncImagePainter
 import com.example.tuninghub.ui.theme.BrightTealBlue
 import com.example.tuninghub.ui.theme.DarkOrange
-import com.example.tuninghub.ui.theme.DustGrey
-import com.example.tuninghub.ui.theme.LightOrange
 import com.example.tuninghub.ui.theme.SnowWhite
 
 
@@ -166,7 +162,6 @@ fun SignUpScreen(
                 focusedIndicatorColor = BrightTealBlue,
                 cursorColor = BrightTealBlue
             )
-
         )
         Spacer(modifier = Modifier.height(5.dp))
         CuadroTexto(nombre, { nombre = it }, "Nombre")
@@ -346,7 +341,7 @@ private fun InstrumentList(
         onExpandedChange = { expanded = !expanded },
     ) {
         TextField(
-// The `menuAnchor` modifier must be passed to the text field to handle
+            // The `menuAnchor` modifier must be passed to the text field to handle
             // expanding/collapsing the menu on click. A read-only text field has
             // the anchor type `PrimaryNotEditable`.
             modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),

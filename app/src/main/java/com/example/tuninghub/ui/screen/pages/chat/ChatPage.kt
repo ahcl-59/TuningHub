@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.tuninghub.ui.theme.DarkOrange
+import com.example.tuninghub.ui.theme.LightOrange
 import com.example.tuninghub.ui.theme.SnowWhite
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,8 +79,8 @@ fun TopNavigationBar(
 ) {
     TabRow(
         selectedTabIndex = selectedIndex,
-        containerColor = SnowWhite, // Tu color de fondo
-        contentColor = DarkOrange,  // Color de la línea indicadora y texto
+        containerColor = LightOrange, // Color de fondo
+        contentColor = DarkOrange,  // Línea indicadora y texto
         indicator = { tabPositions ->
             if (selectedIndex < tabPositions.size) {
                 TabRowDefaults.SecondaryIndicator(

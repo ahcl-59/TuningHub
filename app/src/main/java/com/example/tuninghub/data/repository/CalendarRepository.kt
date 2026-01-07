@@ -1,9 +1,7 @@
 package com.example.tuninghub.data.repository
 
 import android.util.Log
-import com.example.tuninghub.data.model.ChatDto
 import com.example.tuninghub.data.model.TaskDto
-import com.example.tuninghub.data.model.UserDto
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
@@ -85,7 +83,6 @@ class CalendarRepository {
                 Log.e("Firebase", "Error al actualizar tarea", e)
                 onResult(false, e.message)
             }
-
     }
 
     fun deleteTask(taskId:String,onResult: (Boolean, String?) -> Unit){

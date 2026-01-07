@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -44,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -59,9 +62,9 @@ import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.ui.screen.pages.chat.CalendarDialog
 import com.example.tuninghub.ui.theme.BloodRed
 import com.example.tuninghub.ui.theme.BrightTealBlue
+import com.example.tuninghub.ui.theme.DarkOrange
 import com.example.tuninghub.ui.theme.DustGrey
 import com.example.tuninghub.ui.theme.SnowWhite
-import com.example.tuninghub.ui.theme.SurfTurquoise
 import com.example.tuninghub.util.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,10 +97,9 @@ fun CalendarPage(modifier: Modifier = Modifier) {
                         .fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(color= DarkOrange)
                 }
             }
-
             tasks.isEmpty() -> {
                 Box(
                     modifier = Modifier
@@ -109,7 +111,6 @@ fun CalendarPage(modifier: Modifier = Modifier) {
                     Text("No hay tareas disponibles")
                 }
             }
-
             else -> {
                 LazyColumn(
                     // El modifier.fillMaxSize() no es necesario aquí, ya que Column se encargará.
@@ -288,7 +289,6 @@ fun TaskItem(
             }
         }
     }
-
 }
 
 @Composable
@@ -319,18 +319,34 @@ fun TaskCardEdit(
     //Para llamar a la función:
     val format = DateTimeFormatter()
     Dialog(onDismissRequest = onDismiss) {
-        Card(border = BorderStroke(1.dp, SurfTurquoise)) {
+        Card(
+            colors = CardDefaults.cardColors(containerColor = SnowWhite),
+            elevation = CardDefaults.cardElevation(10.dp)) {
             Column(Modifier.padding(16.dp)) {
                 selectedTask?.let { tarea ->
                     OutlinedTextField(
                         value = tituloEdit,
                         onValueChange = { tituloEdit = it },
-                        label = { Text("Título nuevo de la tarea") }
+                        label = { Text("Título nuevo de la tarea") },
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            unfocusedIndicatorColor = DustGrey,
+                            focusedIndicatorColor = DustGrey,
+                            cursorColor = DustGrey
+                        )
                     )
                     OutlinedTextField(
                         value = descripcionEdit,
                         onValueChange = { descripcionEdit = it },
-                        label = { Text("Descripción nueva de la tarea") }
+                        label = { Text("Descripción nueva de la tarea") },
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            unfocusedIndicatorColor = DustGrey,
+                            focusedIndicatorColor = DustGrey,
+                            cursorColor = DustGrey
+                        )
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -383,7 +399,6 @@ fun TaskCardEdit(
                                 )
                             }
                         }
-
                     }
                     Row(modifier = Modifier.fillMaxWidth()) {
                         //Botón de Actualizar tarea
@@ -458,9 +473,6 @@ fun TaskCardEdit(
                     onDismiss = { showDatePicker = false }
                 )
             }
-
         }
     }
-
-
 }

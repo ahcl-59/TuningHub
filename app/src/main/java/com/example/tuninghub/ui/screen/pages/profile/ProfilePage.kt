@@ -1,7 +1,5 @@
 package com.example.tuninghub.ui.screen.pages.profile
 
-
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,7 +38,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,7 +47,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
@@ -74,6 +70,7 @@ import com.example.tuninghub.R
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.ui.screen.auth.AuthViewModel
 import com.example.tuninghub.ui.theme.DarkOrange
+import com.example.tuninghub.ui.theme.DustGrey
 import com.example.tuninghub.ui.theme.SnowWhite
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -111,18 +108,19 @@ fun ProfilePage(modifier: Modifier, navController: NavController) {
                 }
                 //Menú de despliegue
                 DropdownMenu(
+                    containerColor = SnowWhite,
                     expanded = showMenu,
                     onDismissRequest = { showMenu = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Editar") },
+                        text = { Text("Editar", fontFamily = FontFamily.SansSerif,color= DustGrey)},
                         onClick = {
                             showMenu = false
                             navController.navigate("editarPerfil")
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text("Logout") },
+                        text = { Text("Logout", fontFamily = FontFamily.SansSerif,color=DustGrey)},
                         onClick = {
                             showMenu = false
                             authViewModel.logOut(navController)
@@ -139,12 +137,11 @@ fun ProfilePage(modifier: Modifier, navController: NavController) {
             if (user != null) {
                 CuerpoProfile(user!!)
             } else {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = DarkOrange)
             }
         }
     }
 }
-
 
 @Composable
 fun CuerpoProfile(u: UserDto) {
@@ -348,7 +345,6 @@ fun CuerpoProfile(u: UserDto) {
                             )
                         }
                     }
-
                 }else{
                     Text(
                         text = buildAnnotatedString {

@@ -2,7 +2,6 @@ package com.example.tuninghub.ui.screen.pages.calendar
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.provider.CalendarContract
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -11,11 +10,9 @@ import com.example.tuninghub.data.model.TaskDto
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.data.repository.CalendarRepository
 import com.example.tuninghub.data.repository.UserRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class CalendarViewModel : ViewModel() {
 
@@ -27,7 +24,6 @@ class CalendarViewModel : ViewModel() {
 
     private val _oneTask = MutableStateFlow<TaskDto?>(null)
     val oneTask = _oneTask
-
 
     init {
         getExistingTasks()
@@ -113,7 +109,6 @@ class CalendarViewModel : ViewModel() {
             //Devolvemos a la UI la llamada
             onResult(isSuccess, errorMessage)
         }
-
     }
 
     fun getMyUserId(): String? {

@@ -118,7 +118,7 @@ class ChatRepository {
             if (snapshot.exists()) {
                 snapshot.toObject(ChatDto::class.java)
             } else {
-                Log.e("ChatRepository", "No existe documento para UID: $chId")
+                Log.e("ChatRepository", "No existe documento para chatId: $chId")
                 null
             }
         } catch (e: Exception) {
@@ -167,18 +167,6 @@ class ChatRepository {
         }
         awaitClose {listener.remove()}
     }
-
-    /*suspend fun getPendingUserChats(userId: String): List<ChatDto> {
-        return try {
-            firestore.collection("chats").whereArrayContains("participantes",userId)
-                .whereEqualTo("status", ChatStatus.PENDIENTE.name).get().await().documents.mapNotNull { snapshot ->
-                    snapshot.toObject(ChatDto::class.java)
-                }//esto para filtrar aquellos que son para nosotros, pero creados por otherUser
-                .filter{it.createdBy != userId}
-        } catch (e: Exception) {
-            emptyList()
-        }
-    }*/
 }
 
 

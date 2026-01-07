@@ -18,8 +18,8 @@ import com.example.tuninghub.ui.screen.pages.chat.ChatScreen
 import com.example.tuninghub.ui.screen.pages.chat.ChatViewModel
 import com.example.tuninghub.ui.screen.pages.chat.ChatViewModelFactory
 import com.example.tuninghub.ui.screen.pages.profile.EditarPerfilScreen
+import com.example.tuninghub.ui.screen.pages.profile.ProfilePage
 import com.example.tuninghub.ui.screen.pages.profile.ProfileViewModel
-
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -67,7 +67,9 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                 )
                 ChatScreen(modifier, navController, chatViewModel)
             }
-
+            composable("pestania_profilepage"){
+                ProfilePage(modifier,navController)
+            }
             composable("pestania_chatpage"){
                 ChatPage(modifier,navController)
             }

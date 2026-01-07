@@ -30,7 +30,6 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -46,11 +45,9 @@ import com.example.tuninghub.R
 import com.example.tuninghub.data.model.ChatDto
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.ui.theme.BrightTealBlue
-import com.example.tuninghub.ui.theme.DarkOrange
 import com.example.tuninghub.ui.theme.DustGrey
 import com.example.tuninghub.ui.theme.LightOrange
 import com.example.tuninghub.ui.theme.SnowWhite
-import com.example.tuninghub.ui.theme.SurfTurquoise
 import java.text.SimpleDateFormat
 import java.util.Locale
 

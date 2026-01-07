@@ -92,6 +92,5 @@ fun AuthScreen (modifier: Modifier = Modifier, navController: NavHostController)
         ){
             Text (text = "Signup", fontSize = 22.sp, color = DustGrey)
         }
-
     }
 }

@@ -46,12 +46,20 @@ class HomePageViewModel: ViewModel(){
             _musicians.value = musiciansList
         }
     }
+    fun refreshMusicians() {//clonada para que no haya interferencias
+        viewModelScope.launch {//corrutina para leer la info
+            val usersList:List<UserDto> = withContext(Dispatchers.IO){
+                repository.getAllMusicians()
+            }
+            val musiciansList:List<MusicianDto> = usersList.map{u->
+                mapUserDtoToMusicianDto(u)
+            }
+            _musicians.value = musiciansList
+        }
+    }
 
     //REVISAR
-    suspend fun mapUserDtoToMusicianDto(
-        user: UserDto,
-        //interests: List<ConnectionDto> // Lista de intereses enviados o recibidos
-    ): MusicianDto {
+    suspend fun mapUserDtoToMusicianDto(user: UserDto): MusicianDto {
         // 1 -> Determinar el estado de la conexión
         val myId = repository.getCurrentUserId()
         val chatId = user.uid?.let { ChatIdGenerator().generateChatId(myId!!,it) }
@@ -75,7 +83,6 @@ class HomePageViewModel: ViewModel(){
             val user = repository.getUser(musicianId)
             _oneMusician.value = user
         }
-
     }
 
     fun checkOnChatStatus(otherUserId: String){
@@ -86,7 +93,6 @@ class HomePageViewModel: ViewModel(){
             _chat.value = chatItem
         }
     }
-
 
     fun requestMusician(otherUserId: String, navigate:(String)->Unit){
         val myId = repository.getCurrentUserId()?:return
@@ -113,6 +119,5 @@ class HomePageViewModel: ViewModel(){
                 }
             }
         }
-
     }
 }

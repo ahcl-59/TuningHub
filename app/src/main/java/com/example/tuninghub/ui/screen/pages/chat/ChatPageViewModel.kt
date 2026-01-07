@@ -1,18 +1,14 @@
 package com.example.tuninghub.ui.screen.pages.chat
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tuninghub.data.model.ChatDto
-import com.example.tuninghub.data.model.ChatStatus
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.data.repository.ChatRepository
 import com.example.tuninghub.data.repository.UserRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ChatPageViewModel: ViewModel() {
 
@@ -35,7 +31,6 @@ class ChatPageViewModel: ViewModel() {
 
     private fun getAcceptedExistingChats() {
         viewModelScope.launch {//corrutina para leer la info
-
             chRepository.getAcceptedUserChats(repository.getCurrentUserId()!!)
                 .collect { updatedList ->
                     _acceptedChats.value = updatedList
@@ -49,25 +44,10 @@ class ChatPageViewModel: ViewModel() {
             chRepository.getPendingUserChats(repository.getCurrentUserId()!!)
                 .collect { updatedList ->
                     _pendingChats.value = updatedList
-
                 }
         }
     }
-    /*private fun getPendingExistingChats() {
-        viewModelScope.launch {//corrutina para leer la info
-            try {
-                Log.d("ChatVM", "Iniciando carga de chats pendientes...")
-                val pendingChatList: List<ChatDto> = withContext(Dispatchers.IO) {
-                    chRepository.getPendingUserChats(repository.getCurrentUserId()!!)
-                }
-                Log.d("ChatVM", "Chats recibidos: ${pendingChatList.size}")
-                _pendingChats.value = pendingChatList
-            }catch(e:Exception){
-                Log.e("ChatVM", "Error cargando chats", e)
 
-            }
-        }
-    }*/
     fun getMyChatUserId():String?{
         return repository.getCurrentUserId()
     }

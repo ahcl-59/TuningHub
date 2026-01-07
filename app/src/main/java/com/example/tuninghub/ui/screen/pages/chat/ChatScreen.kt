@@ -1,12 +1,10 @@
 package com.example.tuninghub.ui.screen.pages.chat
 
-import android.app.AlertDialog
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +27,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -49,7 +46,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDefaults
@@ -69,7 +65,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -82,31 +77,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
-import com.example.tuninghub.R
 import com.example.tuninghub.data.model.MessageDto
 import com.example.tuninghub.data.model.TaskDto
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.ui.screen.pages.calendar.CalendarViewModel
-import com.example.tuninghub.ui.screen.pages.homepage.MusicianCard
-import com.example.tuninghub.ui.screen.pages.homepage.MusicianItem
-import com.example.tuninghub.ui.screen.pages.profile.ProfileViewModel
 import com.example.tuninghub.ui.theme.BloodRed
 import com.example.tuninghub.ui.theme.BrightTealBlue
 import com.example.tuninghub.ui.theme.DarkOrange
 import com.example.tuninghub.ui.theme.DustGrey
 import com.example.tuninghub.ui.theme.LightOrange
 import com.example.tuninghub.ui.theme.SnowWhite
-import com.example.tuninghub.ui.theme.SurfTurquoise
-import com.example.tuninghub.util.ChatIdGenerator
 import com.example.tuninghub.util.DateTimeFormatter
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -164,6 +150,7 @@ fun ChatScreen(modifier: Modifier, navController: NavController, chatViewModel: 
                             .padding(end = 10.dp)
                             .size(50.dp)
                             .clip(CircleShape)
+                            .background(SnowWhite)
                             .border(border = BorderStroke(1.dp, Color.Black), CircleShape),
                         alignment = Alignment.TopStart
                     )
@@ -203,7 +190,6 @@ fun ChatScreen(modifier: Modifier, navController: NavController, chatViewModel: 
                     .fillMaxWidth()
                     .imePadding()
                     .navigationBarsPadding()
-
             ) {
                 ChatBox(
                     chatViewModel, calendarViewModel,
@@ -230,7 +216,6 @@ fun MessageBubble(
         } else {
             Arrangement.Start
         }
-
     ) {
         Log.d("MsgRow", "El otherUser es ${otherUser.uid}")
         Log.d("MsgSender", "El sender es ${message.senderId}")
@@ -277,7 +262,7 @@ fun MessageBubble(
                     fontSize = 13.sp,
                 )
                 Spacer(modifier = Modifier.height(2.dp))
-                val time = SimpleDateFormat("HH:mm", Locale.getDefault())
+                val time = SimpleDateFormat("dd/MM/yy HH:mm", Locale.getDefault())
                 Text(
                     modifier = Modifier.align(Alignment.End),
                     text = time.format(message.timestamp?.toDate()),
@@ -286,7 +271,6 @@ fun MessageBubble(
                     fontSize = 13.sp,
                 )
             }
-
         }
     }
 }
@@ -310,7 +294,7 @@ fun ChatBox(
             onClick = {
                 showDialog = true
             }
-        ) { Icon(Icons.Default.Add, contentDescription = "Botón menú") }
+        ) { Icon(Icons.Default.Add, contentDescription = "Botón añadir tarea") }
         if (showDialog) {
             val myUserId = chViewModel.getMyChatUserId()
             val otherUserId = chViewModel.otherUser.value?.uid ?: ""
@@ -328,24 +312,30 @@ fun ChatBox(
 
                 }
             )
-
         }
-
         OutlinedTextField(
             modifier = Modifier.weight(1f),
             onValueChange = {
                 chatText = it
             },
-            placeholder = { Text("Escribe tu mensaje...") },
+            placeholder = { Text("Escribe tu mensaje...", fontFamily = FontFamily.SansSerif) },
             value = chatText,
-            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                unfocusedIndicatorColor = DustGrey,
+                focusedIndicatorColor = DustGrey,
+                cursorColor = DustGrey
+            )
         )
         IconButton(
             onClick = {
                 onSendListener(chatText)
                 chViewModel.sendMessage(chatText)
                 chatText = ""
-            }
+            },
+            enabled = chatText.isNotEmpty()
         ) { Icon(Icons.Default.Send, contentDescription = "Botón de enviar mensaje") }
     }
 }
@@ -369,12 +359,13 @@ fun CreateTaskDialog(
     //Para llamar a la función:
     val format = DateTimeFormatter()
     AlertDialog(
+        containerColor = SnowWhite,
         onDismissRequest = onDismiss,
         text = {
-            Column(modifier = Modifier.padding(1.dp), verticalArrangement = Arrangement.Center) {
+            Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.Center) {
                 Box(
-                    modifier = Modifier
-                        .align(Alignment.End)
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.TopEnd
                 ) {
                     IconButton(
                         onClick = { onDismiss() },
@@ -398,7 +389,6 @@ fun CreateTaskDialog(
                         color = DustGrey
                     )
                 }
-
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = titulo,
@@ -420,8 +410,8 @@ fun CreateTaskDialog(
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.Transparent,
                         unfocusedContainerColor = Color.Transparent,
-                        unfocusedIndicatorColor = BrightTealBlue, // Línea de abajo fija
-                        focusedIndicatorColor = BrightTealBlue, // Línea de abajo de edición
+                        unfocusedIndicatorColor = BrightTealBlue,
+                        focusedIndicatorColor = BrightTealBlue,
                         cursorColor = BrightTealBlue
                     )
                 )
@@ -474,7 +464,6 @@ fun CreateTaskDialog(
                             )
                         }
                     }
-
                 }
             }
         },
@@ -507,7 +496,6 @@ fun CreateTaskDialog(
             onDismiss = { showDatePicker = false }
         )
     }
-
 }
 
 //Nuevo composable ajeno al Chat para la creación de una tarea de calendario

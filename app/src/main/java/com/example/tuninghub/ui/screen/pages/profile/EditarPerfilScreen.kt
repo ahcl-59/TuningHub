@@ -35,6 +35,7 @@ import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -48,18 +49,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.tuninghub.R
+import com.example.tuninghub.ui.theme.BloodRed
+import com.example.tuninghub.ui.theme.BrightTealBlue
+import com.example.tuninghub.ui.theme.DarkOrange
+import com.example.tuninghub.ui.theme.DustGrey
+import com.example.tuninghub.ui.theme.SnowWhite
 import com.example.tuninghub.ui.theme.SurfTurquoise
 
 
 @Composable
 fun EditarPerfilScreen(
-    modifier: Modifier,
     navController: NavController,
     profileViewModel: ProfileViewModel,
 ) {
@@ -146,6 +152,13 @@ fun EditarPerfilScreen(
                     value = nombre,
                     onValueChange = { nombre = it },
                     label = { Text("Nombre") },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        unfocusedIndicatorColor = DustGrey,
+                        focusedIndicatorColor = DustGrey,
+                        cursorColor = DustGrey
+                    )
                 )
                 Spacer(Modifier.height(8.dp))
                 //Editable: apellido
@@ -153,6 +166,13 @@ fun EditarPerfilScreen(
                     value = apellido,
                     onValueChange = { apellido = it },
                     label = { Text("Apellido") },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        unfocusedIndicatorColor = DustGrey,
+                        focusedIndicatorColor = DustGrey,
+                        cursorColor = DustGrey
+                    )
                 )
                 Spacer(Modifier.height(8.dp))
                 //Email - no se puede cambiar
@@ -171,7 +191,14 @@ fun EditarPerfilScreen(
                     value = ciudad,
                     onValueChange = { ciudad = it },
                     label = { Text("Ciudad") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        unfocusedIndicatorColor = DustGrey,
+                        focusedIndicatorColor = DustGrey,
+                        cursorColor = DustGrey
+                    )
                 )
                 Spacer(Modifier.height(8.dp))
                 //Editable: Situación
@@ -183,7 +210,14 @@ fun EditarPerfilScreen(
                     onValueChange = { bio = it },
                     label = { Text("Biografía") },
                     modifier = Modifier.fillMaxWidth(),
-                    maxLines = 5
+                    maxLines = 5,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        unfocusedIndicatorColor = DustGrey,
+                        focusedIndicatorColor = DustGrey,
+                        cursorColor = DustGrey
+                    )
                 )
                 Spacer(Modifier.height(16.dp))
                 //Editable: Enlace
@@ -192,7 +226,14 @@ fun EditarPerfilScreen(
                     onValueChange = { enlace = it },
                     label = { Text("Enlace de actividad artística") },
                     modifier = Modifier.fillMaxWidth(),
-                    maxLines = 1
+                    maxLines = 1,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        unfocusedIndicatorColor = DustGrey,
+                        focusedIndicatorColor = DustGrey,
+                        cursorColor = DustGrey
+                    )
                 )
                 Spacer(Modifier.height(16.dp))
                 //BOTÓN DE UPDATE USER
@@ -205,21 +246,20 @@ fun EditarPerfilScreen(
                                 ciudad, bio, imagen, enlace
                             )
                         }
-                        navController.navigate("home") {
+                        navController.navigate("pestania_profilepage") {
                             popUpTo("editarPerfil") { inclusive = true }
                         }
                     }
                 ) {
                     Text("Guardar Cambios")
                 }
-
                 Spacer(Modifier.height(5.dp))
                 //BOTÓN DELETE USER
                 Button(
                     onClick = {
                         alertaDelete = true
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                    colors = ButtonDefaults.buttonColors(BloodRed)
                 ) {
                     Text("Eliminar cuenta")
                 }
@@ -231,10 +271,10 @@ fun EditarPerfilScreen(
                             alertaDelete = false
                             alertaPassword = ""
                         },
-                        title = { Text("Mensaje") },
+                        title = { Text("¡Un momento, por favor!",fontFamily=FontFamily.SansSerif) },
                         text = {
                             Column {
-                                Text("¿Estás seguro de que quieres eliminar la cuenta ?")
+                                Text("¿Estás seguro de que quieres eliminar la cuenta ?", fontFamily = FontFamily.SansSerif)
 
                                 OutlinedTextField(
                                     value = alertaPassword,
@@ -243,14 +283,21 @@ fun EditarPerfilScreen(
                                     visualTransformation = PasswordVisualTransformation(),
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                                     enabled = !isDeleting, // Deshabilitar mientras carga
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = TextFieldDefaults.colors(
+                                        focusedContainerColor = Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent,
+                                        unfocusedIndicatorColor = DustGrey,
+                                        focusedIndicatorColor = DustGrey,
+                                        cursorColor = DustGrey
+                                    )
                                 )
                             }
                         },
                         confirmButton = {
                             Button(
+                                colors = ButtonDefaults.buttonColors(BloodRed),
                                 onClick = {
-
                                     isDeleting = true
                                     profileViewModel.deleteUser(u.uid.toString(), alertaPassword)
                                     Log.d("DeleteUser", "Eliminación de ${u.uid} correcto")
@@ -258,14 +305,15 @@ fun EditarPerfilScreen(
                                 },
                                 enabled = alertaPassword.isNotEmpty() && !isDeleting
                             ) {
-                                Text(text = "SÍ")
+                                Text(text = "SÍ", fontFamily = FontFamily.SansSerif )
                             }
                         },
                         dismissButton = {
                             Button(
                                 onClick = {
                                     alertaDelete = false
-                                }
+                                },
+                                colors = ButtonDefaults.buttonColors(SurfTurquoise)
                             ) {
                                 Text(text = "NO")
                             }
@@ -277,7 +325,7 @@ fun EditarPerfilScreen(
             Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator()
+            CircularProgressIndicator(color= DarkOrange)
         }
     }
 }
@@ -305,8 +353,8 @@ private fun SeleccionarSituacion(
             label = { Text("Situación laboral") },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = ExposedDropdownMenuDefaults.textFieldColors(
-                unfocusedContainerColor = Color(0xFFFFFDFD),
-                focusedContainerColor = Color(0xFFBBBBBB),
+                unfocusedContainerColor = SnowWhite,
+                focusedContainerColor = BrightTealBlue.copy(alpha = 0.2f)
             ),
         )
         ExposedDropdownMenu(
@@ -359,8 +407,8 @@ private fun InstrumentList(
             label = { Text("Instrumento") },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = ExposedDropdownMenuDefaults.textFieldColors(
-                unfocusedContainerColor = Color(0xFFFFFDFD),
-                focusedContainerColor = Color(0xFFBBBBBB),
+                unfocusedContainerColor = SnowWhite,
+                focusedContainerColor = BrightTealBlue.copy(alpha = 0.2f)
             ),
         )
         ExposedDropdownMenu(

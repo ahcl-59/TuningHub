@@ -2,7 +2,6 @@ package com.example.tuninghub.data.repository
 
 import android.net.Uri
 import android.util.Log
-import com.example.tuninghub.data.model.MusicianDto
 import com.example.tuninghub.data.model.UserDto
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
