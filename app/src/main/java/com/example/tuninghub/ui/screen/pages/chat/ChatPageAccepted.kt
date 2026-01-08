@@ -26,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,12 +37,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.tuninghub.R
 import com.example.tuninghub.data.model.ChatDto
-import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.ui.theme.BrightTealBlue
 import com.example.tuninghub.ui.theme.DustGrey
 import com.example.tuninghub.ui.theme.LightOrange
@@ -112,11 +111,8 @@ fun AcceptedChatItem(
         it != userId
     }
     //REVISAR
-    val musician by produceState<UserDto?>(initialValue = null, otherUserId) {
-        value = otherUserId?.let {
-            cpViewModel.getOneMusician(it)
-        }
-    }
+    val musician by cpViewModel.getOneMusician(otherUserId ?: "")
+        .collectAsStateWithLifecycle(initialValue = null)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,

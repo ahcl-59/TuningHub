@@ -27,8 +27,7 @@ class ProfileViewModel() : ViewModel() {
     fun getCurrentUser() {
         Log.d("ProfileVM", "UID actual: $uid")
         viewModelScope.launch {
-            if (uid != null) {
-                val user = repository.getUser(uid!!)
+            uid?.let { repository.getUser(it) }?.collect { user ->
                 Log.d("ProfileVM", "Resultado de getUser(): $user")
                 _currentUser.value = user
             }

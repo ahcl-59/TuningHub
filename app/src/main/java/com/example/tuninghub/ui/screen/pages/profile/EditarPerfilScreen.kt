@@ -12,9 +12,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.captionBarPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -108,8 +111,11 @@ fun EditarPerfilScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .imePadding()
+            .navigationBarsPadding()
             .verticalScroll(rememberScrollState())
-            .padding(30.dp),
+            .padding(30.dp)
+            ,
         verticalArrangement = Arrangement.Center
     ) {
         user?.let { u ->
@@ -301,7 +307,7 @@ fun EditarPerfilScreen(
                                     isDeleting = true
                                     profileViewModel.deleteUser(u.uid.toString(), alertaPassword)
                                     Log.d("DeleteUser", "Eliminación de ${u.uid} correcto")
-                                    navController.navigate("auth") {popUpTo("home") {inclusive = true}}
+                                    navController.navigate("auth") {popUpTo(0)}
                                 },
                                 enabled = alertaPassword.isNotEmpty() && !isDeleting
                             ) {

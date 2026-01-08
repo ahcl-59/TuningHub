@@ -53,6 +53,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -96,14 +97,14 @@ fun SignUpScreen(
         modifier = modifier
             .background(SnowWhite)
             .fillMaxSize()
-            .padding(top = 40.dp, bottom = 50.dp, start = 40.dp, end = 40.dp)
+            .imePadding()
             .verticalScroll(scrollState)
-            .imePadding(),
+            .padding(top = 40.dp, bottom = 50.dp, start = 40.dp, end = 40.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Hola compi de atril!",
+            text = "¡Hola compi de atril!",
             modifier = Modifier.fillMaxWidth(),
             style = TextStyle(
                 fontSize = 30.sp,

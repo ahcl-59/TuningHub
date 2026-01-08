@@ -309,7 +309,6 @@ fun ChatBox(
                     showDialog = false
                     cViewModel.sincronizarConCalendarioExterno(context, task)
                     cViewModel.saveTask(task)
-
                 }
             )
         }

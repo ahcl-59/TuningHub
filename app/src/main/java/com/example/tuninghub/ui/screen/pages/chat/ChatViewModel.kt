@@ -1,5 +1,6 @@
 package com.example.tuninghub.ui.screen.pages.chat
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -53,9 +54,10 @@ class ChatViewModel(
     }
     fun cargarOtherUser() {
         viewModelScope.launch {
-            val user = repository.getUser(otherUserId)
-            //se comunica con el UserRepository que gestiona la base de datos
-            _otherUser.value = user
+            otherUserId.let { repository.getUser(it) }.collect { user ->
+                Log.d("ChatVM", "Resultado de cargarOtherUser(): $user")
+                _otherUser.value = user
+            }
         }
     }
     //Enviar mensajes

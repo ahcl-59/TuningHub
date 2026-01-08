@@ -6,6 +6,7 @@ import com.example.tuninghub.data.model.ChatDto
 import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.data.repository.ChatRepository
 import com.example.tuninghub.data.repository.UserRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -52,7 +53,7 @@ class ChatPageViewModel: ViewModel() {
         return repository.getCurrentUserId()
     }
 
-    suspend fun getOneMusician(uid:String): UserDto? {
+    fun getOneMusician(uid:String): Flow<UserDto?> {
         return repository.getUser(uid)
     }
 

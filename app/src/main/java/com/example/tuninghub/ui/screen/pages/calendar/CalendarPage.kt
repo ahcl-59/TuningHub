@@ -40,7 +40,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,9 +55,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tuninghub.data.model.TaskDto
-import com.example.tuninghub.data.model.UserDto
 import com.example.tuninghub.ui.screen.pages.chat.CalendarDialog
 import com.example.tuninghub.ui.theme.BloodRed
 import com.example.tuninghub.ui.theme.BrightTealBlue
@@ -138,12 +137,9 @@ fun TaskItem(
         it != userId
     }
     var showDialog by remember { mutableStateOf(false) }
-    //REVISAR
-    val musician by produceState<UserDto?>(initialValue = null, otherUserId) {
-        value = otherUserId?.let {
-            cViewModel.getOneMusician(it)
-        }
-    }
+    val musician by cViewModel.getOneMusician(otherUserId ?: "")
+        .collectAsStateWithLifecycle(initialValue = null)
+
     Column(
         horizontalAlignment = Alignment.Start,
         modifier = Modifier

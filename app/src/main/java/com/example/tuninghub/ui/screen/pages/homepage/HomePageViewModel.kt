@@ -80,8 +80,9 @@ class HomePageViewModel: ViewModel(){
 
     fun getOneMusician(musicianId:String){
         viewModelScope.launch {
-            val user = repository.getUser(musicianId)
-            _oneMusician.value = user
+            repository.getUser(musicianId).collect {user->
+                _oneMusician.value = user
+            }
         }
     }
 

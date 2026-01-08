@@ -7,6 +7,9 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class UserRepository {
@@ -19,20 +22,18 @@ class UserRepository {
         return FirebaseAuth.getInstance().currentUser?.uid
     }
 
-    suspend fun getUser(uid: String): UserDto? {
-        return try {
-            val snapshot = firestore.collection("users").document(uid).get().await()
-            Log.d("UserRepository", "Snapshot data: ${snapshot.data}") // debug
-            if (snapshot.exists()) {
-                snapshot.toObject(UserDto::class.java)
-            } else {
-                Log.e("UserRepository", "No existe documento para UID: $uid")
-                null
+    fun getUser(uid: String): Flow<UserDto?> = callbackFlow {
+        val query = firestore.collection("users").document(uid)
+        val listener = query.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                Log.e("UserRepository", "No existe documento para UID: $uid", error)
+                close(error)
+                return@addSnapshotListener
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+            val user = snapshot?.toObject(UserDto::class.java)
+            user?.let { trySend(it) }
         }
+        awaitClose { listener.remove() }
     }
 
     fun updateUser(
@@ -89,8 +90,9 @@ class UserRepository {
         }
     }
 
-    suspend fun deleteUser(userId: String, pw:String) {
-        val firebaseUser = FirebaseAuth.getInstance().currentUser
+    suspend fun deleteUser(userId: String, pw: String) {
+        val auth = FirebaseAuth.getInstance()
+        val firebaseUser = auth.currentUser
         val emailUser = firebaseUser?.email
 
         if (firebaseUser == null || emailUser.isNullOrEmpty()) {
@@ -98,18 +100,22 @@ class UserRepository {
             throw Exception("Authentication data missing.")
         }
 
-        val credenciales = EmailAuthProvider.getCredential(emailUser,pw)
+        val credenciales = EmailAuthProvider.getCredential(emailUser, pw)
+        firebaseUser.reauthenticate(credenciales).await()
 
         try {
             firestore.collection("users")
                 .document(userId)
                 .delete()
 
-            storage.reference.child("users/$userId/profile.jpg")
+            try{storage.reference.child("users/$userId/profile.jpg")
                 .delete()
+            }catch (e: Exception){
+                Log.d("UserRepository","La foto no existía")
+            }
 
-            firebaseUser.reauthenticate(credenciales).await()
             firebaseUser.delete().await()
+            auth.signOut()
 
         } catch (e: Exception) {
             Log.d("Profile", "Error eliminando cuenta")
@@ -119,10 +125,11 @@ class UserRepository {
 
     suspend fun getAllMusicians(): List<UserDto> {
         return try {
-            firestore.collection("users").whereNotEqualTo("uid",getCurrentUserId()).get().await().documents.mapNotNull { snapshot ->
-                snapshot.toObject(UserDto::class.java)
-            }
-        } catch (e:Exception){
+            firestore.collection("users").whereNotEqualTo("uid", getCurrentUserId()).get()
+                .await().documents.mapNotNull { snapshot ->
+                    snapshot.toObject(UserDto::class.java)
+                }
+        } catch (e: Exception) {
             emptyList()
         }
     }

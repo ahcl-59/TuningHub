@@ -50,8 +50,12 @@ fun AuthScreen (modifier: Modifier = Modifier, navController: NavHostController)
                 .height(300.dp)
                 .clip(CircleShape)
         )
-        Spacer(modifier = Modifier.height(10.dp))
-
+        /*Text(text = "Connecting musicians",
+            style = TextStyle(
+                textAlign = TextAlign.Center,
+                fontFamily = FontFamily.SansSerif
+            )
+        )*/
         Text(text = "Comienza aquí",
             style = TextStyle(
                 fontSize = 30.sp,
@@ -60,16 +64,7 @@ fun AuthScreen (modifier: Modifier = Modifier, navController: NavHostController)
                 textAlign = TextAlign.Center
             )
         )
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Text(text = "Connecting musicians",
-            style = TextStyle(
-                textAlign = TextAlign.Center,
-                fontFamily = FontFamily.SansSerif
-            )
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(40.dp))
 
         Button(onClick = {
             navController.navigate("login")
@@ -79,7 +74,7 @@ fun AuthScreen (modifier: Modifier = Modifier, navController: NavHostController)
         ){
             Text (text = "Login", fontSize = 22.sp)
         }
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(15.dp))
 
         Button(onClick = {
             navController.navigate("signup")

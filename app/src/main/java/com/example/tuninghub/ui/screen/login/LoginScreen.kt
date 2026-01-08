@@ -66,7 +66,7 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Bienvenido/a de vuelta!",
+                text = "¡Bienvenido/a de vuelta!",
                 modifier = Modifier.fillMaxWidth(),
                 style = TextStyle(
                     fontSize = 35.sp,
