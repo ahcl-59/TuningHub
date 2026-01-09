@@ -1,4 +1,4 @@
-# PROYECTO_DAM_TUNINGHUB#
+# PROYECTO_DAM_TUNINGHUB
 Proyecto de fin de grado superior en **Desarrollo de Aplicaciones Multiplataforma** en la Universidad Alfonso X El Sabio (UAX)
 
 ## DESCRIPCIÓN
@@ -16,7 +16,7 @@ Proyecto de fin de grado superior en **Desarrollo de Aplicaciones Multiplataform
 
 ## MANUAL DE INSTALACIÓN DE USUARIO
 1. Ir al repositorio de Google Drive: [***LINK***](https://drive.google.com/drive/folders/1-mVVDmpP1HmQSDc-gUIR1O0BqHMSkqOY?usp=sharing)
-2. Descargar el fichero ***```app-release.apk```***
+2. Descargar el fichero ***`tuninghub-release.apk`***
 3. Dar permisos al dispositivo -> es posible que haya que activar el permiso de "Instalar aplicaciones de fuentes desconocidas"
 4. Si sale el aviso de "App no reconocida" -> pulsar "Instalar de todas formas"
 
