@@ -13,3 +13,11 @@
 .externalNativeBuild
 .cxx
 local.properties
+# Secretos y claves
+**/google-services.json
+*.jks
+*.keystore
+.env
+
+# Archivos temporales de logs
+*.log
