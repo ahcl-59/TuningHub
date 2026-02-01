@@ -15,8 +15,8 @@ Proyecto de fin de ciclo superior en **Desarrollo de Aplicaciones Multiplataform
 - Versión requerida: **Android 7(API 24)** o superior
 
 ## 📷CAPTURAS DE PANTALLA
-| INICIO | PERFIL | CHAT |
-| :---: | :---: | :---:  |
-| <img src= "screenshots/screenshot1.jpg" width="200"> | <img src= "screenshots/screenshot2.jpg" width="200"> | <img src= "screenshots/screenshot3.jpg" width="200"> |
+| INICIO | PERFIL | CHAT | CONEXIONES |
+| :---: | :---: | :---:  | :---: |
+| <img src= "screenshots/screenshot1.jpg" width="200"> | <img src= "screenshots/screenshot2.jpg" width="200"> | <img src= "screenshots/screenshot3.jpg" width="200"> | <img src= "screenshots/screenshot4.jpg" width="200"> |
 
 ¡A conectar! 📯🎻🎹🥁
